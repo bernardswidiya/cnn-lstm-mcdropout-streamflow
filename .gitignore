@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+
+raw/gagesii/basinchar.zip
+raw/gagesii/*.xlsx
+raw/hujan/ghcnd-stations.txt
+raw/hujan/ghcnd-inventory.txt
+.DS_Store

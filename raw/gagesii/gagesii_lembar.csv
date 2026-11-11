@@ -1,0 +1,28 @@
+lembar,atribut,status
+BasinID,14,16 pos ditemukan
+Bas_Classif,6,16 pos ditemukan
+Bas_Morph,3,16 pos ditemukan
+Bound_QA,5,"dilewati, administratif"
+Climate,49,16 pos ditemukan
+Climate_Ppt_Annual,60,16 pos ditemukan
+Climate_Tmp_Annual,60,16 pos ditemukan
+FlowRec,115,16 pos ditemukan
+Geology,7,16 pos ditemukan
+Hydro,33,16 pos ditemukan
+HydroMod_Dams,28,16 pos ditemukan
+HydroMod_Other,12,16 pos ditemukan
+Landscape_Pat,4,16 pos ditemukan
+LC06_Basin,19,16 pos ditemukan
+LC06_Mains100,19,16 pos ditemukan
+LC06_Mains800,19,16 pos ditemukan
+LC06_Rip100,19,16 pos ditemukan
+LC06_Rip800,19,16 pos ditemukan
+LC_Crops,22,16 pos ditemukan
+Nutrient_App,2,16 pos ditemukan
+Pest_App,1,16 pos ditemukan
+Pop_Infrastr,7,16 pos ditemukan
+Prot_Areas,3,16 pos ditemukan
+Regions,14,16 pos ditemukan
+Soils,24,16 pos ditemukan
+Topo,12,16 pos ditemukan
+X_Region_Names,18,"dilewati, tanpa kolom ID"

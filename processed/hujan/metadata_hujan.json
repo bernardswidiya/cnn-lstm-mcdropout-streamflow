@@ -1,0 +1,334 @@
+{
+  "sumber": "NOAA GHCN-Daily, elemen PRCP, file .dly di raw/hujan/dly",
+  "notebook": "preprocessing/preprocessing.ipynb, tahap 14-17 dan 26",
+  "periode": [
+    "2000-01-01",
+    "2024-12-31"
+  ],
+  "stasiun_barat_ke_timur": [
+    "USC00468308",
+    "USC00442044",
+    "USW00013741",
+    "USC00447278",
+    "USC00443310",
+    "USC00445595",
+    "USC00445880",
+    "USC00443375",
+    "USW00013733",
+    "USC00441955",
+    "USC00448941",
+    "USW00093736",
+    "USC00446491",
+    "USC00446712",
+    "USC00445050",
+    "USC00442142"
+  ],
+  "nama_stasiun": {
+    "USC00468308": "SNOWSHOE",
+    "USC00442044": "COVINGTON FLTR PLT",
+    "USW00013741": "ROANOKE-BLACKSBURG RGNL AP",
+    "USC00447278": "ROANOKE 8 N",
+    "USC00443310": "GATHRIGHT DAM",
+    "USC00445595": "MILL GAP",
+    "USC00445880": "MUSTOE 1 SW",
+    "USC00443375": "GLASGOW 1 SE",
+    "USW00013733": "LYNCHBURG RGNL AP",
+    "USC00441955": "CONCORD 4 SSW",
+    "USC00448941": "WAYNESBORO WTP",
+    "USW00093736": "CHARLOTTESVILLE ALBEMARLE AP",
+    "USC00446491": "SCOTTSVILLE 6SE",
+    "USC00446712": "PIEDMONT RSCH STN",
+    "USC00445050": "LOUISA",
+    "USC00442142": "CROZIER"
+  },
+  "pos_hulu_ke_hilir": [
+    "02018000",
+    "02020500",
+    "02021500",
+    "02022500",
+    "02019500",
+    "02024000",
+    "02025500",
+    "02027000",
+    "02027500",
+    "02026000",
+    "02031000",
+    "02028500",
+    "02030000",
+    "02029000",
+    "02034000",
+    "02035000"
+  ],
+  "satuan": "mm/hari, dikonversi dari per-sepuluh mm",
+  "kalender": "tengah malam ke tengah malam, sama dengan debit USGS; stasiun COOP yang dibaca pagi hari dimajukan satu hari",
+  "aturan": {
+    "tanggal_fiktif": "blok hari 29-31 pada bulan yang lebih pendek dilewati, bukan dihitung hilang",
+    "nilai_9999": "kosong",
+    "qflag_terisi": "kosong; nilai gagal uji kualitas NOAA tidak dipakai",
+    "mflag_T": "dipakai, nilainya 0 (trace)",
+    "mflag_P": "dipakai sebagai 0; hari ber-P tidak lebih sering hujan di stasiun acuan daripada hari nol biasa",
+    "jam_pengamatan": {
+      "acuan": "USW00013741",
+      "metode": "korelasi terhadap acuan pada geseran 0 dan +1 hari, data latih",
+      "dimajukan_satu_hari": [
+        "USC00468308",
+        "USC00442044",
+        "USC00447278",
+        "USC00443310",
+        "USC00445595",
+        "USC00443375",
+        "USC00441955",
+        "USC00448941",
+        "USC00446491",
+        "USC00446712",
+        "USC00442142"
+      ],
+      "tidak_diubah": [
+        "USW00013741",
+        "USC00445880",
+        "USW00013733",
+        "USW00093736",
+        "USC00445050"
+      ],
+      "alasan": "stasiun COOP mencatat hujan 24 jam sampai pembacaan pagi pada tanggal pembacaan, sehingga terlambat sehari dibanding bandara dan debit USGS. Menunda stasiun lain akan membuang nilai prediktif dua stasiun bandara di hulu.",
+      "uji_kenaikan_debit": {
+        "lag_terbaik_sebelum": {
+          "0": 2,
+          "1": 14
+        },
+        "lag_terbaik_sesudah": {
+          "1": 7,
+          "2": 9
+        },
+        "titik_berat_selisih_kelompok_sebelum": 0.59,
+        "titik_berat_selisih_kelompok_sesudah": -0.38
+      },
+      "r2_regresi_80_20_bagian_latih": {
+        "COOP dimajukan": {
+          "h1": 0.45,
+          "h2": 0.513,
+          "h3": 0.416
+        },
+        "lainnya dimundurkan": {
+          "h1": 0.366,
+          "h2": 0.302,
+          "h3": 0.285
+        },
+        "tanpa koreksi": {
+          "h1": 0.449,
+          "h2": 0.435,
+          "h3": 0.348
+        }
+      },
+      "batasan": "bacaan pagi D+1 yang dimajukan ke D memuat sekitar 7 jam pertama hari D+1; window yang berakhir di hari t memuat sedikit hujan hari t+1. Eksperimen hujan perlu dibandingkan dengan data tanpa koreksi."
+    },
+    "penambalan": {
+      "metode": "isi nol hanya bila seluruh tetangga yang punya data mencatat nol",
+      "radius_tetangga_km": 30.0,
+      "gap_maks_hari": 7,
+      "pengecualian": "sel yang dijadikan NaN karena diduga akumulasi tidak diisi nol",
+      "interpolasi_linear": "tidak dipakai; mengarang hujan yang tidak pernah turun"
+    },
+    "hari_hujan": "hujan >= 1 mm"
+  },
+  "akumulasi": {
+    "dikosongkan": [
+      {
+        "stasiun": "USC00441955",
+        "label": "Concord",
+        "tanggal_dly": "2003-09-22",
+        "tanggal_selaras": "2003-09-21",
+        "nilai_mm": 258.8
+      }
+    ],
+    "alasan_concord": "nol selama Badai Isabel 18-19 Sep 2003 lalu 258,8 mm pada 22 Sep 2003 ketika tetangga kering; total 17-23 Sep 299,9 mm berbanding 135-177 mm di empat tetangga; flag M dan Q kosong dan Concord tidak pernah memakai elemen MDPR",
+    "aturan_pencarian": ">= 25 mm setelah >= 3 hari nol; tetangga (4 terdekat) menerima >= 25 mm selama hari nol; tetangga dalam +/-1 hari <= 1/4 nilainya; nilai >= 1/2 hujan tetangga selama hari nol; total sepekan >= 1,5 x median tetangga",
+    "kandidat_lain": [
+      {
+        "stasiun": "USC00448941",
+        "label": "Waynesboro",
+        "tanggal_dly": "2006-06-23",
+        "nilai_mm": 86.4,
+        "hari_nol": 11,
+        "putusan": "bukan akumulasi; bandara Charlottesville mencatat 75,2 mm pada tanggal yang sama"
+      },
+      {
+        "stasiun": "USC00442142",
+        "label": "Crozier",
+        "tanggal_dly": "2017-10-14",
+        "nilai_mm": 92.7,
+        "hari_nol": 30,
+        "putusan": "pola akumulasi; belum diubah, penanganannya masih perlu diputuskan"
+      }
+    ],
+    "pemakaian_MDPR_bulan": {
+      "Snowshoe": 20,
+      "Covington": 4,
+      "RoanokeAP": 0,
+      "Roanoke8N": 4,
+      "Gathright": 0,
+      "MillGap": 9,
+      "Mustoe": 1,
+      "Glasgow": 0,
+      "Lynchburg": 0,
+      "Concord": 0,
+      "Waynesboro": 10,
+      "Charlottesville": 0,
+      "Scottsville": 0,
+      "Piedmont": 110,
+      "Louisa": 0,
+      "Crozier": 22
+    }
+  },
+  "pemetaan": {
+    "terdekat": "deret stasiun terdekat; hari kosong diambil dari stasiun terdekat berikutnya yang punya data",
+    "idw": {
+      "radius_km": 50.0,
+      "bobot": "1/d^2, dihitung ulang atas stasiun yang punya data hari itu",
+      "cadangan": "stasiun terdekat yang punya data bila tidak ada satu pun dalam radius"
+    },
+    "stasiun_terdekat_bersama": {
+      "Glasgow": 7,
+      "Scottsville": 3,
+      "Covington": 1,
+      "Mustoe": 1,
+      "Concord": 1,
+      "Charlottesville": 1,
+      "Waynesboro": 1,
+      "Crozier": 1
+    },
+    "pasangan_kolom_r_di_atas_0_99": {
+      "terdekat": 24,
+      "idw": 2
+    },
+    "pasangan_kolom_identik": {
+      "terdekat": 4,
+      "idw": 0
+    }
+  },
+  "penskalaan": {
+    "transformasi": "log1p lalu standardisasi per pos",
+    "parameter": "rata-rata dan standar deviasi dari data latih saja",
+    "alasan": "hujan menceng ekstrem dan didominasi nol; log1p memadatkan ekor tanpa masalah log nol. Debit tidak dilogaritmakan karena debit variabel yang diprediksi, hujan hanya input."
+  },
+  "tensor": {
+    "file": [
+      "tensor_hujan_h1.npz",
+      "tensor_hujan_h2.npz",
+      "tensor_hujan_h3.npz"
+    ],
+    "array": {
+      "X_terdekat": "(sampel, 14, 16, 1)",
+      "X_idw": "(sampel, 14, 16, 1)",
+      "cadangan_*": "(sampel, 14, 16) True bila nilai berasal dari aturan cadangan"
+    },
+    "penyelarasan": "window hari idx-h-13 sampai idx-h, sama dengan tensor_h{h}.npz",
+    "penggabungan": "np.concatenate([d['X'], dh['X_idw']], axis=-1)"
+  },
+  "nilai_mencurigakan": {
+    "aturan": ">= 50 mm sementara seluruh tetangga 50 km < 5 mm pada hari itu +/- 1 hari",
+    "kasus": [
+      {
+        "stasiun": "Snowshoe",
+        "tanggal": "2024-09-21",
+        "tanggal_dly": "2024-09-22",
+        "hujan_mm": 61.0,
+        "maks_tetangga_mm": 3.6
+      },
+      {
+        "stasiun": "Glasgow",
+        "tanggal": "2016-09-28",
+        "tanggal_dly": "2016-09-29",
+        "hujan_mm": 66.3,
+        "maks_tetangga_mm": 4.8
+      },
+      {
+        "stasiun": "Glasgow",
+        "tanggal": "2020-06-09",
+        "tanggal_dly": "2020-06-10",
+        "hujan_mm": 53.8,
+        "maks_tetangga_mm": 0.8
+      },
+      {
+        "stasiun": "Glasgow",
+        "tanggal": "2021-06-13",
+        "tanggal_dly": "2021-06-14",
+        "hujan_mm": 74.7,
+        "maks_tetangga_mm": 2.8
+      },
+      {
+        "stasiun": "Lynchburg",
+        "tanggal": "2007-07-17",
+        "tanggal_dly": "2007-07-17",
+        "hujan_mm": 65.8,
+        "maks_tetangga_mm": 0.5
+      },
+      {
+        "stasiun": "Concord",
+        "tanggal": "2012-07-09",
+        "tanggal_dly": "2012-07-10",
+        "hujan_mm": 79.5,
+        "maks_tetangga_mm": 3.6
+      },
+      {
+        "stasiun": "Concord",
+        "tanggal": "2015-09-09",
+        "tanggal_dly": "2015-09-10",
+        "hujan_mm": 51.1,
+        "maks_tetangga_mm": 1.5
+      },
+      {
+        "stasiun": "Waynesboro",
+        "tanggal": "2001-08-28",
+        "tanggal_dly": "2001-08-29",
+        "hujan_mm": 71.1,
+        "maks_tetangga_mm": 0.3
+      },
+      {
+        "stasiun": "Waynesboro",
+        "tanggal": "2004-02-01",
+        "tanggal_dly": "2004-02-02",
+        "hujan_mm": 50.8,
+        "maks_tetangga_mm": 0.0
+      },
+      {
+        "stasiun": "Waynesboro",
+        "tanggal": "2012-10-20",
+        "tanggal_dly": "2012-10-21",
+        "hujan_mm": 53.3,
+        "maks_tetangga_mm": 0.0
+      },
+      {
+        "stasiun": "Waynesboro",
+        "tanggal": "2012-11-07",
+        "tanggal_dly": "2012-11-08",
+        "hujan_mm": 53.3,
+        "maks_tetangga_mm": 0.0
+      },
+      {
+        "stasiun": "Scottsville",
+        "tanggal": "2017-07-17",
+        "tanggal_dly": "2017-07-18",
+        "hujan_mm": 64.8,
+        "maks_tetangga_mm": 0.0
+      },
+      {
+        "stasiun": "Crozier",
+        "tanggal": "2012-07-18",
+        "tanggal_dly": "2012-07-19",
+        "hujan_mm": 89.9,
+        "maks_tetangga_mm": 0.0
+      },
+      {
+        "stasiun": "Crozier",
+        "tanggal": "2017-10-13",
+        "tanggal_dly": "2017-10-14",
+        "hujan_mm": 92.7,
+        "maks_tetangga_mm": 3.6
+      }
+    ],
+    "tindakan": "tidak diubah; perlu diputuskan sebelum eksperimen hujan"
+  },
+  "kejadian_rain_on_snow": "banjir terbesar data latih (24-02-2003) didahului salju 127 mm di Glasgow",
+  "catatan": "tidak digabung ke tensor_h*.npz; model dasar memakai debit saja (Ghimire dkk., 2021)"
+}

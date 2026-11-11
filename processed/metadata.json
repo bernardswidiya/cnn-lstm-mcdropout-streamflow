@@ -1,0 +1,110 @@
+{
+  "sumber": [
+    "USGS NWIS",
+    "USGS NLDI",
+    "GAGES-II (Falcone 2011)"
+  ],
+  "notebook": "preprocessing/preprocessing.ipynb",
+  "pos_hulu_ke_hilir": [
+    "02018000",
+    "02020500",
+    "02021500",
+    "02022500",
+    "02019500",
+    "02024000",
+    "02025500",
+    "02027000",
+    "02027500",
+    "02026000",
+    "02031000",
+    "02028500",
+    "02030000",
+    "02029000",
+    "02034000",
+    "02035000"
+  ],
+  "pos_target": "02035000",
+  "indeks_target": 15,
+  "periode": [
+    "2000-01-01",
+    "2024-12-31"
+  ],
+  "n_hari": 9132,
+  "panjang_window": 14,
+  "horizon": [
+    1,
+    2,
+    3
+  ],
+  "channel": [
+    "debit_terskala",
+    "jarak_alur_km",
+    "kemiringan_alur",
+    "elevasi_pos_m",
+    "log_luas",
+    "kebulatan",
+    "elev_rata_das_m",
+    "kemiringan_das",
+    "hujan_tahunan_cm",
+    "aliran_dasar",
+    "kerapatan_alur"
+  ],
+  "alasan_atribut": {
+    "jarak_alur_km": "posisi di jaringan, menentukan waktu tempuh",
+    "kemiringan_alur": "kecepatan rambat air ke pos target",
+    "elevasi_pos_m": "urutan hulu-hilir secara gravitasi",
+    "log_luas": "besaran DAS, menentukan besar aliran",
+    "kebulatan": "bentuk DAS, menentukan ketajaman hidrograf",
+    "elev_rata_das_m": "elevasi seluruh DAS, bukan hanya titik posnya",
+    "kemiringan_das": "kecepatan limpasan permukaan",
+    "hujan_tahunan_cm": "membedakan DAS basah dan kering",
+    "aliran_dasar": "porsi aliran dari air tanah, bukan limpasan langsung",
+    "kerapatan_alur": "kerapatan jaringan alur, mempengaruhi waktu pengumpulan"
+  },
+  "kode_bagian": {
+    "0": "latih",
+    "1": "validasi",
+    "2": "uji",
+    "3": "uji, dikecualikan karena target hasil perkiraan"
+  },
+  "keputusan": {
+    "1_jumlah_pos": "16, gap maksimum 2 hari, total 2 nilai interpolasi",
+    "2_input": "debit saja; curah hujan disiapkan terpisah di tensor_hujan_h*.npz untuk eksperimen lanjutan",
+    "3_transformasi": "standardisasi saja, tanpa logaritma. Sebaran tetap menceng, jadi metrik harus dilaporkan terpisah per rentang aliran",
+    "4_atribut": "10 dari 571 yang tersedia",
+    "5_nilai_perkiraan": "diberi flag dan kode bagian 3, keluar dari data uji"
+  },
+  "lembar_gagesii_dilarang": [
+    "FlowRec",
+    "Climate_Ppt_Annual",
+    "Climate_Tmp_Annual"
+  ],
+  "alasan_dilarang": {
+    "FlowRec": "statistik riwayat alat ukur, bukan sifat fisik DAS: 110 kolom flag tahun air wy1900 sampai wy2009, jumlah tahun rekaman lengkap (FLOWYRS_1900_2009, FLOWYRS_1950_2009, FLOWYRS_1990_2009), persentase nilai perkiraan (FLOW_PCT_EST_VALUES), dan status aktif 2009 (ACTIVE09). Untuk 2000 sampai 2009 kesepuluh kolom tahun airnya bernilai seragam di 16 pos sehingga tidak membawa informasi pembeda. Lembar ini tidak membocorkan periode uji: GAGES-II berhenti pada 2009, periode uji mulai 2021",
+    "Climate_Ppt_Annual, Climate_Tmp_Annual": "nilai tahunan, bukan harian, dan berhenti 2009"
+  },
+  "aturan_gap": {
+    "interpolasi_sampai_hari": 2,
+    "flag_sampai_hari": 7,
+    "lebih_panjang": "pos dibuang"
+  },
+  "pembagian": "70 / 15 / 15 menurut urutan waktu",
+  "penskalaan": "rata-rata dan standar deviasi dari data latih saja",
+  "satuan_debit": "m3/s, dikonversi dari ft3/s faktor 0.0283168466",
+  "ambang_aliran": {
+    "rendah_kuartil1": 59.47,
+    "tinggi_kuartil3": 228.52,
+    "catatan": "dari seluruh periode, hanya untuk mengelompokkan hari saat evaluasi"
+  },
+  "justifikasi_window": {
+    "lag_perambatan_maks_hari": 1,
+    "metode_lag": "korelasi silang selisih harian, data latih saja",
+    "koefisien_resesi_k": 0.9143,
+    "konstanta_waktu_resesi_hari": 11.2,
+    "dasar": "14 hari = 1,25 x konstanta waktu resesi, dengan anggapan peluruhan eksponensial tunggal; resesi terukur cekung (tau sekitar 6 hari pada pekan pertama, sekitar 22 hari sesudahnya)"
+  },
+  "belum_selesai": [
+    "curah hujan belum dipakai di model dasar; tensor terpisah sudah tersedia di tensor_hujan_h*.npz",
+    "sebagian pos berstatus Non-reference menurut GAGES-II"
+  ]
+}
