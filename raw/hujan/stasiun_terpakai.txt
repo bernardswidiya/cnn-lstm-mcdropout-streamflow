@@ -1,0 +1,16 @@
+USC00441955  37.2819  -78.9592  248.4 VA CONCORD 4 SSW                               
+USC00442044  37.8111  -79.9883  379.2 VA COVINGTON FLTR PLT                          
+USC00442142  37.6664  -77.8769   85.3 VA CROZIER                                     
+USC00443310  37.9458  -79.9542  539.5 VA GATHRIGHT DAM                               
+USC00443375  37.6183  -79.4358  224.6 VA GLASGOW 1 SE                                
+USC00445050  38.0400  -78.0061  128.0 VA LOUISA                                      
+USC00445595  38.3064  -79.7200  736.4 VA MILL GAP                                    
+USC00445880  38.3144  -79.6589  721.5 VA MUSTOE 1 SW                                 
+USC00446491  37.7428  -78.4014   95.1 VA SCOTTSVILLE 6SE                             
+USC00446712  38.2253  -78.1189  158.5 VA PIEDMONT RSCH STN                  HCN      
+USC00447278  37.3622  -79.9586  352.7 VA ROANOKE 8 N                                 
+USC00448941  38.0803  -78.8750  387.1 VA WAYNESBORO WTP                              
+USC00468308  38.4014  -79.9953 1463.6 WV SNOWSHOE                                    
+USW00013733  37.3214  -79.2064  274.9 VA LYNCHBURG RGNL AP                      72410
+USW00013741  37.3172  -79.9736  346.9 VA ROANOKE-BLACKSBURG RGNL AP             72411
+USW00093736  38.1375  -78.4550  192.3 VA CHARLOTTESVILLE ALBEMARLE AP                

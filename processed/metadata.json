@@ -58,7 +58,7 @@
     "elev_rata_das_m": "elevasi seluruh DAS, bukan hanya titik posnya",
     "kemiringan_das": "kecepatan limpasan permukaan",
     "hujan_tahunan_cm": "membedakan DAS basah dan kering",
-    "aliran_dasar": "porsi aliran dari air tanah, bukan limpasan langsung",
+    "aliran_dasar": "porsi aliran dari simpanan air tanah (BFI_AVE); sifat perilaku DAS, bukan riwayat pemantauan",
     "kerapatan_alur": "kerapatan jaringan alur, mempengaruhi waktu pengumpulan"
   },
   "kode_bagian": {
@@ -72,7 +72,7 @@
     "2_input": "debit saja; curah hujan disiapkan terpisah di tensor_hujan_h*.npz untuk eksperimen lanjutan",
     "3_transformasi": "standardisasi saja, tanpa logaritma. Sebaran tetap menceng, jadi metrik harus dilaporkan terpisah per rentang aliran",
     "4_atribut": "10 dari 571 yang tersedia",
-    "5_nilai_perkiraan": "diberi flag dan kode bagian 3, keluar dari data uji"
+    "5_nilai_perkiraan": "sampel uji yang nilai TARGET-nya A:e diberi kode bagian 3 dan keluar dari data uji. Pengecualian hanya berlaku pada nilai yang diprediksi; window input tetap boleh memuat A:e. Dari 1322 sampel uji horizon 1, 301 memuat A:e pada window pos target dan 938 pada pos mana pun"
   },
   "lembar_gagesii_dilarang": [
     "FlowRec",
@@ -80,28 +80,56 @@
     "Climate_Tmp_Annual"
   ],
   "alasan_dilarang": {
-    "FlowRec": "statistik riwayat alat ukur, bukan sifat fisik DAS: 110 kolom flag tahun air wy1900 sampai wy2009, jumlah tahun rekaman lengkap (FLOWYRS_1900_2009, FLOWYRS_1950_2009, FLOWYRS_1990_2009), persentase nilai perkiraan (FLOW_PCT_EST_VALUES), dan status aktif 2009 (ACTIVE09). Untuk 2000 sampai 2009 kesepuluh kolom tahun airnya bernilai seragam di 16 pos sehingga tidak membawa informasi pembeda. Lembar ini tidak membocorkan periode uji: GAGES-II berhenti pada 2009, periode uji mulai 2021",
+    "FlowRec": "riwayat pemantauan pos, bukan perilaku DAS: 110 kolom flag tahun air wy1900 sampai wy2009, jumlah tahun rekaman lengkap (FLOWYRS_1900_2009, FLOWYRS_1950_2009, FLOWYRS_1990_2009), persentase nilai perkiraan (FLOW_PCT_EST_VALUES), dan status aktif 2009 (ACTIVE09). Untuk 2000 sampai 2009 kesepuluh kolom tahun airnya bernilai seragam di 16 pos sehingga tidak membawa informasi pembeda. Lembar ini tidak membocorkan periode uji: GAGES-II berhenti pada 2009, periode uji mulai 2021",
     "Climate_Ppt_Annual, Climate_Tmp_Annual": "nilai tahunan, bukan harian, dan berhenti 2009"
   },
+  "catatan_BFI_AVE": "BFI_AVE (aliran_dasar) dan lembar FlowRec sama-sama diturunkan dari rekaman debit. BFI_AVE tetap dipakai karena menggambarkan sifat perilaku DAS, yaitu porsi aliran dari simpanan air tanah, dan lazim dipakai sebagai deskriptor DAS pada literatur hidrologi termasuk CAMELS. FlowRec menggambarkan riwayat pemantauan, yaitu tahun mana saja pos merekam aliran, yang tidak menjelaskan perilaku DAS. BFI_AVE adalah rata-rata jangka panjang terbitan 2011, tidak memuat periode uji",
+  "catatan_nama_kolom": "nama kolom jarak_alur_ke_muara_km dan kemiringan_ke_muara_m_per_km di raw/spatial/atribut_turunan.csv bersifat historis. Yang dimaksud adalah jarak alur dan kemiringan ke pos target 02035000 (batas hilir penelitian), bukan ke muara Sungai James",
+  "keterbatasan_urutan_stasiun": [
+    "urutan relatif 02031000 (110,2 km) dan 02028500 (109,6 km) tidak tegas: selisih 0,6 km lebih kecil daripada panjang segmen alur NHDPlus rata-rata di lintasan kedua pos (1,0 sampai 1,6 km)",
+    "jaringan sungai berbentuk pohon, sedangkan sumbu stasiun berbentuk barisan; pos yang bersebelahan bisa berada di cabang berbeda, misalnya 02031000 (Mechums, hulu Rivanna) terpisah tiga posisi dari 02034000 (Rivanna)"
+  ],
   "aturan_gap": {
     "interpolasi_sampai_hari": 2,
     "flag_sampai_hari": 7,
     "lebih_panjang": "pos dibuang"
   },
   "pembagian": "70 / 15 / 15 menurut urutan waktu",
-  "penskalaan": "rata-rata dan standar deviasi dari data latih saja",
+  "penskalaan": "rata-rata dan standar deviasi dari data latih saja; ddof=0 untuk debit, atribut statis, dan hujan",
   "satuan_debit": "m3/s, dikonversi dari ft3/s faktor 0.0283168466",
   "ambang_aliran": {
-    "rendah_kuartil1": 59.47,
-    "tinggi_kuartil3": 228.52,
-    "catatan": "dari seluruh periode, hanya untuk mengelompokkan hari saat evaluasi"
+    "rendah_kuartil1": 57.77,
+    "tinggi_kuartil3": 220.87,
+    "catatan": "kuartil 1 dan 3 debit pos target dari data latih saja; dipakai untuk mengelompokkan hari saat evaluasi"
   },
   "justifikasi_window": {
     "lag_perambatan_maks_hari": 1,
     "metode_lag": "korelasi silang selisih harian, data latih saja",
     "koefisien_resesi_k": 0.9143,
     "konstanta_waktu_resesi_hari": 11.2,
-    "dasar": "14 hari = 1,25 x konstanta waktu resesi, dengan anggapan peluruhan eksponensial tunggal; resesi terukur cekung (tau sekitar 6 hari pada pekan pertama, sekitar 22 hari sesudahnya)"
+    "n_hari_menurun": 4131,
+    "metode_resesi": "k = exp(median selisih log debit) pada seluruh hari menurun data latih, tanpa memilih kejadian; hari menurun = debit lebih kecil daripada hari sebelumnya",
+    "dasar": "14 hari = 1,25 x konstanta waktu resesi, dengan anggapan peluruhan eksponensial tunggal",
+    "pelambatan_resesi": {
+      "catatan": "nuansa, bukan dasar penetapan window: pekan pertama masih memuat pengatusan aliran cepat, sesudahnya tersisa aliran dasar dari simpanan air tanah",
+      "tau_menurut_umur_resesi": [
+        {
+          "umur_resesi": "hari ke 1-7",
+          "n_hari": 3523,
+          "tau_hari": 10.1
+        },
+        {
+          "umur_resesi": "hari ke 8-14",
+          "n_hari": 555,
+          "tau_hari": 16.0
+        },
+        {
+          "umur_resesi": "hari ke 15 ke atas",
+          "n_hari": 53,
+          "tau_hari": 27.4
+        }
+      ]
+    }
   },
   "belum_selesai": [
     "curah hujan belum dipakai di model dasar; tensor terpisah sudah tersedia di tensor_hujan_h*.npz",

@@ -5,6 +5,7 @@ Unduh raw data hujan harian GHCN-Daily (NOAA).
 Keluaran:
   raw/hujan/ghcnd-readme.txt       penjelasan format .dly
   raw/hujan/ghcnd-stations.txt     daftar stasiun GHCN
+  raw/hujan/stasiun_terpakai.txt   baris ghcnd-stations.txt untuk 16 stasiun yang dipakai
   raw/hujan/ghcnd-inventory.txt    elemen dan rentang tahun tiap stasiun
   raw/hujan/dly/<ID>.dly           data per stasiun
 """
@@ -14,7 +15,8 @@ import requests
 
 BASE = "https://www.ncei.noaa.gov/pub/data/ghcn/daily"
 
-# 16 stasiun di sekitar DAS James, data PRCP >= 95% lengkap (2000-2024)
+# 16 stasiun di sekitar DAS James. Kelengkapan PRCP 2000-2024 di atas 95% pada 14 stasiun;
+# dua lainnya Piedmont (USC00446712) 90,34% dan Waynesboro (USC00448941) 93,47%
 STASIUN = ["USW00013733","USW00013741","USC00443375","USC00443310","USC00447278",
            "USC00441955","USC00445595","USC00446491","USW00093736","USC00445050",
            "USC00442044","USC00445880","USC00442142","USC00468308","USC00446712",
@@ -36,6 +38,10 @@ def main():
         nama = "ghcnd-readme.txt" if n == "readme.txt" else n
         simpan(out / nama, r.content)
         print(f"      {nama}: {len(r.content)/1e6:.1f} MB")
+        if n == "ghcnd-stations.txt":
+            # notebook membaca saringan ini, bukan file 11 MB aslinya
+            baris = [b for b in r.text.splitlines() if b[:11] in STASIUN]
+            simpan(out / "stasiun_terpakai.txt", ("\n".join(baris) + "\n").encode())
 
     print(f"[2/2] {len(STASIUN)} stasiun, format .dly ...")
     ada = []

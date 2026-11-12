@@ -6,7 +6,7 @@ Hitung atribut spasial tiap pos dari data USGS.
   NLDI basin     : poligon DAS -> luas, keliling, kebulatan
   NLDI flowlines : alur sungai -> jarak ke muara, kemiringan
 
-Keluaran: atribut_spasial.csv
+Keluaran: raw/spatial/atribut_turunan.csv (lewat opsi -o; bawaan atribut_spasial.csv)
 """
 import sys, time, math, json
 import numpy as np, pandas as pd, requests
