@@ -2,7 +2,11 @@
   "sumber": [
     "USGS NWIS",
     "USGS NLDI",
-    "GAGES-II (Falcone 2011)"
+    "NHDPlus V2 VAA",
+    "Daymet V4 R1",
+    "gridMET",
+    "USGS 3DEP",
+    "GAGES-II (Falcone 2011), deskripsi saja"
   ],
   "notebook": "preprocessing/preprocessing.ipynb",
   "pos_hulu_ke_hilir": [
@@ -13,18 +17,19 @@
     "02019500",
     "02024000",
     "02025500",
-    "02027000",
     "02027500",
+    "02027000",
     "02026000",
-    "02031000",
     "02028500",
+    "02031000",
+    "02032640",
     "02030000",
     "02029000",
     "02034000",
     "02035000"
   ],
   "pos_target": "02035000",
-  "indeks_target": 15,
+  "indeks_target": 16,
   "periode": [
     "2000-01-01",
     "2024-12-31"
@@ -38,28 +43,163 @@
   ],
   "channel": [
     "debit_terskala",
-    "jarak_alur_km",
-    "kemiringan_alur",
-    "elevasi_pos_m",
+    "flag_isian",
+    "hujan_daymet_log1p_terskala",
+    "tmax_terskala",
+    "tmin_terskala",
     "log_luas",
-    "kebulatan",
     "elev_rata_das_m",
-    "kemiringan_das",
-    "hujan_tahunan_cm",
-    "aliran_dasar",
-    "kerapatan_alur"
+    "kemiringan_das_m_per_km",
+    "hujan_tahunan_mm",
+    "bfi_latih"
+  ],
+  "channel_dinamis": [
+    "debit_terskala",
+    "flag_isian",
+    "hujan_daymet_log1p_terskala",
+    "tmax_terskala",
+    "tmin_terskala"
+  ],
+  "atribut_tingkat_c_ablasi": [
+    "elevasi_pos_m",
+    "kebulatan",
+    "kerapatan_alur_km_per_km2",
+    "jarak_alur_ke_muara_km",
+    "kemiringan_ke_muara_m_per_km"
   ],
   "alasan_atribut": {
-    "jarak_alur_km": "posisi di jaringan, menentukan waktu tempuh",
-    "kemiringan_alur": "kecepatan rambat air ke pos target",
-    "elevasi_pos_m": "urutan hulu-hilir secara gravitasi",
-    "log_luas": "besaran DAS, menentukan besar aliran",
-    "kebulatan": "bentuk DAS, menentukan ketajaman hidrograf",
-    "elev_rata_das_m": "elevasi seluruh DAS, bukan hanya titik posnya",
-    "kemiringan_das": "kecepatan limpasan permukaan",
-    "hujan_tahunan_cm": "membedakan DAS basah dan kering",
-    "aliran_dasar": "porsi aliran dari simpanan air tanah (BFI_AVE); sifat perilaku DAS, bukan riwayat pemantauan",
-    "kerapatan_alur": "kerapatan jaringan alur, mempengaruhi waktu pengumpulan"
+    "log_luas": "besaran DAS, menentukan besar aliran (tingkat A)",
+    "elev_rata_das_m": "elevasi seluruh DAS, berkaitan dengan iklim dan salju (tingkat A)",
+    "kemiringan_das_m_per_km": "kecepatan limpasan permukaan (tingkat A)",
+    "hujan_tahunan_mm": "membedakan DAS basah dan kering; Daymet bagian latih (tingkat A)",
+    "bfi_latih": "porsi aliran dari simpanan air tanah; Lyne-Hollick pada debit bagian latih (tingkat B)"
+  },
+  "varian": {
+    "V17": {
+      "pos": [
+        "02018000",
+        "02020500",
+        "02021500",
+        "02022500",
+        "02019500",
+        "02024000",
+        "02025500",
+        "02027500",
+        "02027000",
+        "02026000",
+        "02028500",
+        "02031000",
+        "02032640",
+        "02030000",
+        "02029000",
+        "02034000",
+        "02035000"
+      ],
+      "folder": "processed",
+      "bentuk_h1": [
+        9118,
+        14,
+        17,
+        10
+      ],
+      "nilai_isian": 127
+    },
+    "V21": {
+      "pos": [
+        "02018000",
+        "02020500",
+        "02021500",
+        "02022500",
+        "02019500",
+        "02024000",
+        "02024915",
+        "02024752",
+        "02025500",
+        "02027500",
+        "02027000",
+        "02026000",
+        "02028500",
+        "02031000",
+        "02032250",
+        "02032640",
+        "02030000",
+        "02029000",
+        "02034000",
+        "02030500",
+        "02035000"
+      ],
+      "folder": "processed/varian/V21",
+      "bentuk_h1": [
+        9118,
+        14,
+        21,
+        10
+      ],
+      "nilai_isian": 7283
+    },
+    "V18": {
+      "pos": [
+        "02018000",
+        "02020500",
+        "02021500",
+        "02022500",
+        "02019500",
+        "02024000",
+        "02025500",
+        "02025652",
+        "02027500",
+        "02027000",
+        "02026000",
+        "02028500",
+        "02031000",
+        "02032640",
+        "02030000",
+        "02029000",
+        "02034000",
+        "02035000"
+      ],
+      "folder": "processed/varian/V18",
+      "bentuk_h1": [
+        9118,
+        14,
+        18,
+        10
+      ],
+      "nilai_isian": 4550
+    },
+    "V17_daymet_asli": {
+      "pos": [
+        "02018000",
+        "02020500",
+        "02021500",
+        "02022500",
+        "02019500",
+        "02024000",
+        "02025500",
+        "02027500",
+        "02027000",
+        "02026000",
+        "02028500",
+        "02031000",
+        "02032640",
+        "02030000",
+        "02029000",
+        "02034000",
+        "02035000"
+      ],
+      "folder": "processed/varian/V17_daymet_asli",
+      "bentuk_h1": [
+        9118,
+        14,
+        17,
+        10
+      ],
+      "nilai_isian": 127,
+      "catatan": "hujan dan Tmax Daymet tanpa geser; selain itu sama dengan V17"
+    }
+  },
+  "pos_tidak_dipakai": {
+    "02032515": "tidak punya data di bagian latih; parameter isian hanya bisa dari data validasi dan uji"
   },
   "kode_bagian": {
     "0": "latih",
@@ -68,34 +208,189 @@
     "3": "uji, dikecualikan karena target hasil perkiraan"
   },
   "keputusan": {
-    "1_jumlah_pos": "16, gap maksimum 2 hari, total 2 nilai interpolasi",
-    "2_input": "debit saja; curah hujan disiapkan terpisah di tensor_hujan_h*.npz untuk eksperimen lanjutan",
-    "3_transformasi": "standardisasi saja, tanpa logaritma. Sebaran tetap menceng, jadi metrik harus dilaporkan terpisah per rentang aliran",
-    "4_atribut": "10 dari 571 yang tersedia",
-    "5_nilai_perkiraan": "sampel uji yang nilai TARGET-nya A:e diberi kode bagian 3 dan keluar dari data uji. Pengecualian hanya berlaku pada nilai yang diprediksi; window input tetap boleh memuat A:e. Dari 1322 sampel uji horizon 1, 301 memuat A:e pada window pos target dan 938 pada pos mana pun"
+    "1_pemilihan_pos": "rekaman ada sejak 2000-01-01; gap di tengah rekaman diisi regresi dinamis (lolos uji gap buatan, tahap 0i) dan diberi flag. Menggantikan aturan lama gap maksimum 2 hari.",
+    "2_input": "debit, flag isian, hujan dan Tmax Daymet hari t-1, Tmin Daymet hari t; hujan GHCN-Daily tanpa koreksi jam pengamatan di tensor_hujan_h*.npz sebagai pembanding",
+    "6_geser_daymet": "hujan dan Tmax Daymet digeser +1 hari karena Daymet V4 memindahkan bacaan pagi COOP ke hari sebelumnya (Thornton dkk. 2021), sehingga nilai hari t memuat hujan sekitar 7 jam pertama hari t+1; posisi 2000-01-01 memakai Daymet 1999-12-31; versi tanpa geser di processed/varian/V17_daymet_asli",
+    "3_transformasi": "debit: standardisasi tanpa logaritma; hujan: log1p lalu standardisasi; suhu: standardisasi. Sebaran debit tetap menceng, jadi metrik dilaporkan per rentang aliran",
+    "4_atribut": "5 atribut dihitung seragam (tingkat A dan B); dor tidak dipakai; tingkat C hanya ablasi",
+    "5_nilai_perkiraan": "sampel uji yang nilai TARGET-nya A:e diberi kode bagian 3 dan keluar dari data uji. Dari 1322 sampel uji horizon 1, 301 memuat A:e pada window pos target, 938 pada pos mana pun, dan 12 memuat nilai isian"
   },
-  "lembar_gagesii_dilarang": [
-    "FlowRec",
-    "Climate_Ppt_Annual",
-    "Climate_Tmp_Annual"
-  ],
-  "alasan_dilarang": {
-    "FlowRec": "riwayat pemantauan pos, bukan perilaku DAS: 110 kolom flag tahun air wy1900 sampai wy2009, jumlah tahun rekaman lengkap (FLOWYRS_1900_2009, FLOWYRS_1950_2009, FLOWYRS_1990_2009), persentase nilai perkiraan (FLOW_PCT_EST_VALUES), dan status aktif 2009 (ACTIVE09). Untuk 2000 sampai 2009 kesepuluh kolom tahun airnya bernilai seragam di 16 pos sehingga tidak membawa informasi pembeda. Lembar ini tidak membocorkan periode uji: GAGES-II berhenti pada 2009, periode uji mulai 2021",
-    "Climate_Ppt_Annual, Climate_Tmp_Annual": "nilai tahunan, bukan harian, dan berhenti 2009"
+  "aturan_isian": {
+    "di_tengah_rekaman": "regresi dinamis: regresi log(Q+0,001) pada dua donor dengan galat ARMA(1,1); parameter dari bagian latih; Kalman smoother sampai akhir bagian latih, Kalman filter di bagian validasi dan uji",
+    "awal_rekaman": "MOVE.1 log dari satu donor (r_latih tertinggi yang sah), fit pada tumpang-tindih bagian latih",
+    "flag": "channel 1; 1 = nilai isian",
+    "target": "tidak pernah diisi",
+    "catatan": [
+      {
+        "pos": "02024752",
+        "jenis": "awal rekaman",
+        "metode": "MOVE.1",
+        "hari": 2100,
+        "bagian": "latih",
+        "donor": "02025500",
+        "r_latih_donor": "0,993",
+        "keterangan": "fit 4,291 hari; NSE log latih 0,99, sesudah latih 0,99"
+      },
+      {
+        "pos": "02024915",
+        "jenis": "awal rekaman",
+        "metode": "MOVE.1",
+        "hari": 1042,
+        "bagian": "latih",
+        "donor": "02027000",
+        "r_latih_donor": "0,939",
+        "keterangan": "fit 5,350 hari; NSE log latih 0,88, sesudah latih 0,88"
+      },
+      {
+        "pos": "02025500",
+        "jenis": "di tengah",
+        "metode": "regresi dinamis",
+        "hari": 1,
+        "bagian": "latih",
+        "donor": "02026000, 02019500",
+        "r_latih_donor": "0,986, 0,984",
+        "keterangan": "smoother sampai akhir latih"
+      },
+      {
+        "pos": "02025652",
+        "jenis": "di tengah",
+        "metode": "regresi dinamis",
+        "hari": 1,
+        "bagian": "latih",
+        "donor": "02027000, 02031000",
+        "r_latih_donor": "0,901, 0,901",
+        "keterangan": "smoother sampai akhir latih"
+      },
+      {
+        "pos": "02025652",
+        "jenis": "awal rekaman",
+        "metode": "MOVE.1",
+        "hari": 4422,
+        "bagian": "latih",
+        "donor": "02027000",
+        "r_latih_donor": "0,901",
+        "keterangan": "fit 1,969 hari; NSE log latih 0,80, sesudah latih 0,73"
+      },
+      {
+        "pos": "02030000",
+        "jenis": "di tengah",
+        "metode": "regresi dinamis",
+        "hari": 1,
+        "bagian": "uji",
+        "donor": "02031000, 02028500",
+        "r_latih_donor": "0,945, 0,929",
+        "keterangan": "filter"
+      },
+      {
+        "pos": "02030500",
+        "jenis": "awal rekaman",
+        "metode": "MOVE.1",
+        "hari": 2000,
+        "bagian": "latih",
+        "donor": "02030000",
+        "r_latih_donor": "0,918",
+        "keterangan": "fit 4,392 hari; NSE log latih 0,84, sesudah latih 0,72"
+      },
+      {
+        "pos": "02032250",
+        "jenis": "awal rekaman",
+        "metode": "MOVE.1",
+        "hari": 2014,
+        "bagian": "latih",
+        "donor": "02031000",
+        "r_latih_donor": "0,940",
+        "keterangan": "fit 4,378 hari; NSE log latih 0,89, sesudah latih 0,87"
+      },
+      {
+        "pos": "02032640",
+        "jenis": "di tengah",
+        "metode": "regresi dinamis",
+        "hari": 125,
+        "bagian": "validasi",
+        "donor": "02034000, 02027000",
+        "r_latih_donor": "0,939, 0,910",
+        "keterangan": "filter"
+      },
+      {
+        "pos": "semua pos",
+        "jenis": "31 Desember kabisat (Daymet)",
+        "metode": "gridMET rata-rata poligon",
+        "hari": 1,
+        "bagian": "latih",
+        "donor": "—",
+        "r_latih_donor": "—",
+        "keterangan": "2000-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+      },
+      {
+        "pos": "semua pos",
+        "jenis": "31 Desember kabisat (Daymet)",
+        "metode": "gridMET rata-rata poligon",
+        "hari": 1,
+        "bagian": "latih",
+        "donor": "—",
+        "r_latih_donor": "—",
+        "keterangan": "2004-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+      },
+      {
+        "pos": "semua pos",
+        "jenis": "31 Desember kabisat (Daymet)",
+        "metode": "gridMET rata-rata poligon",
+        "hari": 1,
+        "bagian": "latih",
+        "donor": "—",
+        "r_latih_donor": "—",
+        "keterangan": "2008-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+      },
+      {
+        "pos": "semua pos",
+        "jenis": "31 Desember kabisat (Daymet)",
+        "metode": "gridMET rata-rata poligon",
+        "hari": 1,
+        "bagian": "latih",
+        "donor": "—",
+        "r_latih_donor": "—",
+        "keterangan": "2012-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+      },
+      {
+        "pos": "semua pos",
+        "jenis": "31 Desember kabisat (Daymet)",
+        "metode": "gridMET rata-rata poligon",
+        "hari": 1,
+        "bagian": "latih",
+        "donor": "—",
+        "r_latih_donor": "—",
+        "keterangan": "2016-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+      },
+      {
+        "pos": "semua pos",
+        "jenis": "31 Desember kabisat (Daymet)",
+        "metode": "gridMET rata-rata poligon",
+        "hari": 1,
+        "bagian": "validasi",
+        "donor": "—",
+        "r_latih_donor": "—",
+        "keterangan": "2020-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+      },
+      {
+        "pos": "semua pos",
+        "jenis": "31 Desember kabisat (Daymet)",
+        "metode": "gridMET rata-rata poligon",
+        "hari": 1,
+        "bagian": "uji",
+        "donor": "—",
+        "r_latih_donor": "—",
+        "keterangan": "2024-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+      }
+    ]
   },
-  "catatan_BFI_AVE": "BFI_AVE (aliran_dasar) dan lembar FlowRec sama-sama diturunkan dari rekaman debit. BFI_AVE tetap dipakai karena menggambarkan sifat perilaku DAS, yaitu porsi aliran dari simpanan air tanah, dan lazim dipakai sebagai deskriptor DAS pada literatur hidrologi termasuk CAMELS. FlowRec menggambarkan riwayat pemantauan, yaitu tahun mana saja pos merekam aliran, yang tidak menjelaskan perilaku DAS. BFI_AVE adalah rata-rata jangka panjang terbitan 2011, tidak memuat periode uji",
-  "catatan_nama_kolom": "nama kolom jarak_alur_ke_muara_km dan kemiringan_ke_muara_m_per_km di raw/spatial/atribut_turunan.csv bersifat historis. Yang dimaksud adalah jarak alur dan kemiringan ke pos target 02035000 (batas hilir penelitian), bukan ke muara Sungai James",
+  "catatan_BFI": "Lyne-Hollick tiga lintasan, alfa 0,925, pantulan 30 hari (Ladson dkk. 2013), pada rentetan data asli >= 365 hari di bagian latih. Menggantikan BFI_AVE GAGES-II yang dihitung dari seluruh rekaman",
+  "catatan_nama_kolom": "kolom jarak_alur_ke_muara_km dan kemiringan_ke_muara_m_per_km berarti jarak dan kemiringan ke pos target 02035000, dihitung dari NHDPlus VAA dan DEM 3DEP",
   "keterbatasan_urutan_stasiun": [
-    "urutan relatif 02031000 (110,2 km) dan 02028500 (109,6 km) tidak tegas: selisih 0,6 km lebih kecil daripada panjang segmen alur NHDPlus rata-rata di lintasan kedua pos (1,0 sampai 1,6 km)",
-    "jaringan sungai berbentuk pohon, sedangkan sumbu stasiun berbentuk barisan; pos yang bersebelahan bisa berada di cabang berbeda, misalnya 02031000 (Mechums, hulu Rivanna) terpisah tiga posisi dari 02034000 (Rivanna)"
+    "jaringan sungai berbentuk pohon, sedangkan sumbu stasiun berbentuk barisan",
+    "pasangan pos dengan selisih jarak alur di bawah panjang segmen NHDPlus tidak berurutan secara tegas"
   ],
-  "aturan_gap": {
-    "interpolasi_sampai_hari": 2,
-    "flag_sampai_hari": 7,
-    "lebih_panjang": "pos dibuang"
-  },
   "pembagian": "70 / 15 / 15 menurut urutan waktu",
-  "penskalaan": "rata-rata dan standar deviasi dari data latih saja; ddof=0 untuk debit, atribut statis, dan hujan",
+  "penskalaan": "rata-rata dan standar deviasi dari data latih saja; ddof=0",
   "satuan_debit": "m3/s, dikonversi dari ft3/s faktor 0.0283168466",
   "ambang_aliran": {
     "rendah_kuartil1": 57.77,
@@ -108,31 +403,27 @@
     "koefisien_resesi_k": 0.9143,
     "konstanta_waktu_resesi_hari": 11.2,
     "n_hari_menurun": 4131,
-    "metode_resesi": "k = exp(median selisih log debit) pada seluruh hari menurun data latih, tanpa memilih kejadian; hari menurun = debit lebih kecil daripada hari sebelumnya",
     "dasar": "14 hari = 1,25 x konstanta waktu resesi, dengan anggapan peluruhan eksponensial tunggal",
-    "pelambatan_resesi": {
-      "catatan": "nuansa, bukan dasar penetapan window: pekan pertama masih memuat pengatusan aliran cepat, sesudahnya tersisa aliran dasar dari simpanan air tanah",
-      "tau_menurut_umur_resesi": [
-        {
-          "umur_resesi": "hari ke 1-7",
-          "n_hari": 3523,
-          "tau_hari": 10.1
-        },
-        {
-          "umur_resesi": "hari ke 8-14",
-          "n_hari": 555,
-          "tau_hari": 16.0
-        },
-        {
-          "umur_resesi": "hari ke 15 ke atas",
-          "n_hari": 53,
-          "tau_hari": 27.4
-        }
-      ]
-    }
+    "tau_menurut_umur_resesi": [
+      {
+        "umur_resesi": "hari ke 1-7",
+        "n_hari": 3523,
+        "tau_hari": 10.1
+      },
+      {
+        "umur_resesi": "hari ke 8-14",
+        "n_hari": 555,
+        "tau_hari": 16.0
+      },
+      {
+        "umur_resesi": "hari ke 15 ke atas",
+        "n_hari": 53,
+        "tau_hari": 27.4
+      }
+    ]
   },
-  "belum_selesai": [
-    "curah hujan belum dipakai di model dasar; tensor terpisah sudah tersedia di tensor_hujan_h*.npz",
+  "keterbatasan": [
+    "pada V21 dan V18, nilai isian menumpuk di awal bagian latih, sedangkan bagian uji berisi data asli",
     "sebagian pos berstatus Non-reference menurut GAGES-II"
   ]
 }

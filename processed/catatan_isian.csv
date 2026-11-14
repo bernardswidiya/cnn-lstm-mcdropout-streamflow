@@ -1,0 +1,17 @@
+pos,jenis,metode,hari,bagian,donor,r_latih_donor,keterangan
+02024752,awal rekaman,MOVE.1,2100,latih,02025500,"0,993","fit 4,291 hari; NSE log latih 0,99, sesudah latih 0,99"
+02024915,awal rekaman,MOVE.1,1042,latih,02027000,"0,939","fit 5,350 hari; NSE log latih 0,88, sesudah latih 0,88"
+02025500,di tengah,regresi dinamis,1,latih,"02026000, 02019500","0,986, 0,984",smoother sampai akhir latih
+02025652,di tengah,regresi dinamis,1,latih,"02027000, 02031000","0,901, 0,901",smoother sampai akhir latih
+02025652,awal rekaman,MOVE.1,4422,latih,02027000,"0,901","fit 1,969 hari; NSE log latih 0,80, sesudah latih 0,73"
+02030000,di tengah,regresi dinamis,1,uji,"02031000, 02028500","0,945, 0,929",filter
+02030500,awal rekaman,MOVE.1,2000,latih,02030000,"0,918","fit 4,392 hari; NSE log latih 0,84, sesudah latih 0,72"
+02032250,awal rekaman,MOVE.1,2014,latih,02031000,"0,940","fit 4,378 hari; NSE log latih 0,89, sesudah latih 0,87"
+02032640,di tengah,regresi dinamis,125,validasi,"02034000, 02027000","0,939, 0,910",filter
+semua pos,31 Desember kabisat (Daymet),gridMET rata-rata poligon,1,latih,—,—,"2000-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+semua pos,31 Desember kabisat (Daymet),gridMET rata-rata poligon,1,latih,—,—,"2004-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+semua pos,31 Desember kabisat (Daymet),gridMET rata-rata poligon,1,latih,—,—,"2008-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+semua pos,31 Desember kabisat (Daymet),gridMET rata-rata poligon,1,latih,—,—,"2012-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+semua pos,31 Desember kabisat (Daymet),gridMET rata-rata poligon,1,latih,—,—,"2016-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+semua pos,31 Desember kabisat (Daymet),gridMET rata-rata poligon,1,validasi,—,—,"2020-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"
+semua pos,31 Desember kabisat (Daymet),gridMET rata-rata poligon,1,uji,—,—,"2024-12-31; pr mm apa adanya; tmmx dan tmmn dari K dikurangi 273,15"

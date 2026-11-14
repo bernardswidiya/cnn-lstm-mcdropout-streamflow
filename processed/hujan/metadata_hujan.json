@@ -49,18 +49,19 @@
     "02019500",
     "02024000",
     "02025500",
-    "02027000",
     "02027500",
+    "02027000",
     "02026000",
-    "02031000",
     "02028500",
+    "02031000",
+    "02032640",
     "02030000",
     "02029000",
     "02034000",
     "02035000"
   ],
   "satuan": "mm/hari, dikonversi dari per-sepuluh mm",
-  "kalender": "tengah malam ke tengah malam, sama dengan debit USGS; stasiun COOP yang dibaca pagi hari dimajukan satu hari",
+  "kalender": "tensor, hujan_harian_mm.csv, dan hujan_per_pos_*: tanggal file .dly tanpa koreksi jam pengamatan, supaya tidak ada hujan hari target di dalam window; koreksi (stasiun COOP yang dibaca pagi dimajukan satu hari) hanya dipakai untuk pemeriksaan akumulasi, penambalan, dan korelasi antarstasiun",
   "aturan": {
     "tanggal_fiktif": "blok hari 29-31 pada bulan yang lebih pendek dilewati, bukan dihitung hilang",
     "nilai_9999": "kosong",
@@ -70,7 +71,7 @@
     "jam_pengamatan": {
       "acuan": "USW00013741",
       "metode": "korelasi terhadap acuan pada geseran 0 dan +1 hari, data latih",
-      "dimajukan_satu_hari": [
+      "dimajukan_untuk_pemeriksaan_mutu": [
         "USC00468308",
         "USC00442044",
         "USC00447278",
@@ -120,7 +121,7 @@
           "h3": 0.348
         }
       },
-      "batasan": "bacaan pagi D+1 yang dimajukan ke D memuat sekitar 7 jam pertama hari D+1; window yang berakhir di hari t memuat sedikit hujan hari t+1. Eksperimen hujan perlu dibandingkan dengan data tanpa koreksi."
+      "batasan": "bacaan pagi D+1 yang dimajukan ke D memuat sekitar 7 jam pertama hari D+1; karena itu input tensor memakai data tanpa koreksi, dengan konsekuensi dua pola pencatatan bercampur di sumbu stasiun"
     },
     "penambalan": {
       "metode": "isi nol hanya bila seluruh tetangga yang punya data mencatat nol",
@@ -190,15 +191,15 @@
     "stasiun_terdekat_bersama": {
       "Glasgow": 7,
       "Scottsville": 3,
+      "Charlottesville": 2,
       "Covington": 1,
       "Mustoe": 1,
       "Concord": 1,
-      "Charlottesville": 1,
       "Waynesboro": 1,
       "Crozier": 1
     },
     "pasangan_kolom_r_di_atas_0_99": {
-      "terdekat": 24,
+      "terdekat": 25,
       "idw": 2
     },
     "pasangan_kolom_identik": {
@@ -218,9 +219,9 @@
       "tensor_hujan_h3.npz"
     ],
     "array": {
-      "X_terdekat": "(sampel, 14, 16, 1)",
-      "X_idw": "(sampel, 14, 16, 1)",
-      "cadangan_*": "(sampel, 14, 16) True bila nilai berasal dari aturan cadangan"
+      "X_terdekat": "(sampel, 14, 17, 1)",
+      "X_idw": "(sampel, 14, 17, 1)",
+      "cadangan_*": "(sampel, 14, 17) True bila nilai berasal dari aturan cadangan"
     },
     "penyelarasan": "window hari idx-h-13 sampai idx-h, sama dengan tensor_h{h}.npz",
     "penggabungan": "np.concatenate([d['X'], dh['X_idw']], axis=-1)"
@@ -330,5 +331,5 @@
     "tindakan": "tidak diubah; perlu diputuskan sebelum eksperimen hujan"
   },
   "kejadian_rain_on_snow": "banjir terbesar data latih (24-02-2003) didahului salju 127 mm di Glasgow",
-  "catatan": "tidak digabung ke tensor_h*.npz; model dasar memakai debit saja (Ghimire dkk., 2021)"
+  "catatan": "pembanding; input hujan utama adalah Daymet rata-rata DAS di tensor_h*.npz (channel 2)"
 }
