@@ -69,6 +69,8 @@ ulang, **D** = khusus dataset/perangkat lunak.
 | Daymet | Thornton, M. M., dkk. Daymet: Daily Surface Weather Data on a 1-km Grid for North America, Version 4 R1. ORNL DAAC. | 10.3334/ORNLDAAC/2129 | D | P, Tmax, Tmin rata-rata DAS |
 | gridMET | Abatzoglou, J. T. (2013). Development of gridded surface meteorological data for ecological applications and modelling. *Int. J. Climatology*, 33, 121–131. | 10.1002/joc.3413 (cek ulang) | D | Pengisi 31 Desember tahun kabisat Daymet |
 | GHCND | Menne, M. J., dkk. Global Historical Climatology Network – Daily, Version 3. NOAA NCEI. | 10.7289/V5D21VHZ (cek ulang) | D | Hujan stasiun (pembanding) |
+| NHDPlusV2 | McKay, L., Bondelid, T., Dewald, T., Johnston, J., Moore, R., & Rea, A. (2012). NHDPlus Version 2: User Guide. U.S. EPA. | — | D | Orde Strahler (VAA) alur di dalam DAS; alur orde ≥ 3 di luar DAS sebagai latar peta |
+| 3DEP | U.S. Geological Survey. 3D Elevation Program (DEM 1 arc-second, diambil lewat py3dep). | — | D | Elevasi dan kemiringan DAS; relief latar peta |
 | HyRiver | Chegini, T., Li, H.-Y., & Leung, L. R. (2021). HyRiver: Hydroclimate data retriever. *Journal of Open Source Software*, 6(66), 3175. | 10.21105/joss.03175 (cek ulang) | D | Pustaka unduh Daymet/NLDI/3DEP |
 | Sklearn | Pedregosa, F., dkk. (2011). Scikit-learn: Machine learning in Python. *Journal of Machine Learning Research*, 12, 2825–2830; ditambah dokumentasi `StandardScaler`. | — | D | `ddof = 0` pada standardisasi (dokumentasi `StandardScaler` memakai standar deviasi bias) |
 
