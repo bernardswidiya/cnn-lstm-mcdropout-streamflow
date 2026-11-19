@@ -11,3 +11,6 @@ raw/hujan/ghcnd-inventory.txt
 
 # PDF jurnal tidak disimpan di repo (lihat references/README.md)
 references/*.pdf
+
+# cache unduhan HyRiver (aiohttp)
+cache/

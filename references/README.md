@@ -1,4 +1,4 @@
-# Daftar referensi preprocessing
+# Daftar referensi preprocessing dan pemodelan
 
 Folder ini hanya berisi daftar. **PDF tidak disimpan di repo** karena sebagian
 berlangganan dan repo ini publik. Unduh PDF satu per satu lewat SSO UGM (alat
@@ -8,7 +8,8 @@ komputer sendiri.
 Kunci di kolom pertama dipakai di notebook dengan format `Dasar: [Kunci]`.
 
 Status: **V** = isi dan DOI sudah dicek, **V\*** = isi dicek, DOI belum dicek
-ulang, **D** = khusus dataset/perangkat lunak.
+ulang, **V\*\*** = isi dicek, tidak punya DOI Crossref (lihat bagian G),
+**D** = khusus dataset/perangkat lunak.
 
 ## A. Data hilang dan pengisian gap
 
@@ -91,8 +92,32 @@ ulang, **D** = khusus dataset/perangkat lunak.
 | Stoelzle2013 | Stoelzle, M., Stahl, K., & Weiler, M. (2013). Are streamflow recession characteristics really characteristic? *HESS*, 17, 817–828. | 10.5194/hess-17-817-2013 | V | Gratis | Karakteristik resesi bergantung pada metode ekstraksi |
 | Tallaksen1995 | Tallaksen, L. M. (1995). A review of baseflow recession analysis. *Journal of Hydrology*, 165, 349–370. | 10.1016/0022-1694(94)02540-R | DOI cek ulang | Elsevier (tidak dilanggan) | Model resesi eksponensial |
 
+## G. Pemodelan: arsitektur, pelatihan, pemilihan, dan ketidakpastian
+
+DOI dicek ke Crossref pada 19 November 2026 (judul, penulis, wadah, volume,
+halaman cocok). Tiga entri tanpa DOI Crossref diberi status **V\*\***: isi
+dicek, ID arXiv dicek di DataCite atau tidak ada DOI sama sekali.
+
+| Kunci | Referensi | DOI / ID | Status | Akses | Dipakai untuk |
+|---|---|---|---|---|---|
+| Kingma2014 | Kingma, D. P., & Ba, J. (2014). Adam: A method for stochastic optimization. arXiv:1412.6980. | arXiv:1412.6980 (10.48550/arXiv.1412.6980, DataCite) | V\*\* | Gratis (arXiv) | Optimizer Adam; learning rate bawaan 0,001 |
+| He2015 | He, K., Zhang, X., Ren, S., & Sun, J. (2015). Delving deep into rectifiers: Surpassing human-level performance on ImageNet classification. *Proc. IEEE ICCV*, 1026–1034. | 10.1109/ICCV.2015.123 | V | IEEE; gratis di CVF Open Access | Inisialisasi he_normal |
+| Prechelt1998 | Prechelt, L. (1998). Early stopping — but when? Dalam G. B. Orr & K.-R. Müller (Ed.), *Neural Networks: Tricks of the Trade*, LNCS 1524, 55–69. Springer. | 10.1007/3-540-49430-8_3 | V | Springer | Early stopping pada galat validasi |
+| Gupta2009 | Gupta, H. V., Kling, H., Yilmaz, K. K., & Martinez, G. F. (2009). Decomposition of the mean squared error and NSE performance criteria: Implications for improving hydrological modelling. *Journal of Hydrology*, 377(1–2), 80–91. | 10.1016/j.jhydrol.2009.08.003 | V | Elsevier | KGE |
+| Ghobadi2022 | Ghobadi, F., & Kang, D. (2022). Multi-step ahead probabilistic forecasting of daily streamflow using Bayesian deep learning: A multiple case study. *Water*, 14(22), 3672. | 10.3390/w14223672 | V | Gratis (MDPI) | PICP dan MPIW pada interval 95% |
+| Ghimire2021 | Ghimire, S., Yaseen, Z. M., Farooque, A. A., Deo, R. C., Zhang, J., & Tao, X. (2021). Streamflow prediction using an integrated methodology based on convolutional neural network and long short-term memory networks. *Scientific Reports*, 11, 17497. | 10.1038/s41598-021-96751-4 | V | Open access | CNN-LSTM: Adam lr 0,001, LSTM 100 unit, dropout 0,1, batch 500, 300 epoch, patience 20; 3 lapisan Conv1D (80, 50, 10 filter) (Tabel 2–3) |
+| Pokharel2024 | Pokharel, S., & Roy, T. (2024). A parsimonious setup for streamflow forecasting using CNN-LSTM. *Journal of Hydroinformatics*, 26(11), 2751–2761. Pracetak arXiv:2404.07924. | 10.2166/hydro.2024.114 | V | IWA; gratis arXiv | CNN-LSTM: LSTM 80 unit, dropout 0,3, batch 50, 100 epoch, He uniform; 3 lapisan konvolusi (32, 16, 32), kernel 1×1 dan 3×3. Catatan: halaman akhir 2761 (Crossref dan PDF), bukan 2776 |
+| Weißenborn2025 | Weißenborn, M., Breuer, L., & Houska, T. (2025). Neural networks in catchment hydrology: a comparative study of different algorithms in an ensemble of ungauged basins in Germany. *HESS*, 29, 5131–5164. | 10.5194/hess-29-5131-2025 | V | Gratis (HESS) | Pencarian Latin hypercube (100 sampel); batch 256 lebih baik daripada 2048; jendela 50–365 hari |
+| Klotz2022 | Klotz, D., Kratzert, F., Gauch, M., Keefe Sampson, A., Brandstetter, J., Klambauer, G., Hochreiter, S., & Nearing, G. (2022). Uncertainty estimation with deep learning for rainfall–runoff modeling. *HESS*, 26(6), 1673–1693. | 10.5194/hess-26-1673-2022 | V | Gratis (HESS) | Model MC Dropout (Tabel A3): dropout 0,75 dari kandidat 0,1–0,75, 500 sel LSTM, learning rate 0,001, batch 256. Hiperparameter dipilih dari kalibrasi, yaitu simpangan terkecil dari garis 1:1 probability plot, **dihitung pada data latih** (bagian metode, "selected on the basis of the training data"). MC Dropout memberi estimasi ketidakpastian paling buruk di antara empat pendekatan (kesimpulan); 7.500 sampel |
+| Gal2016 | Gal, Y., & Ghahramani, Z. (2016). Dropout as a Bayesian approximation: Representing model uncertainty in deep learning. *Proceedings of the 33rd International Conference on Machine Learning*, PMLR 48, 1050–1059. | arXiv:1506.02142 (10.48550/arXiv.1506.02142, DataCite); PMLR tanpa DOI | V\*\* | Gratis (PMLR) | MC Dropout: dropout tetap aktif saat prediksi |
+| Srivastava2014 | Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., & Salakhutdinov, R. (2014). Dropout: A simple way to prevent neural networks from overfitting. *Journal of Machine Learning Research*, 15, 1929–1958. | — (JMLR tanpa DOI) | V\*\* | Gratis (JMLR) | Dropout |
+| Hochreiter1997 | Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. *Neural Computation*, 9(8), 1735–1780. | 10.1162/neco.1997.9.8.1735 | V | MIT Press | LSTM |
+| LeCun1998 | LeCun, Y., Bottou, L., Bengio, Y., & Haffner, P. (1998). Gradient-based learning applied to document recognition. *Proceedings of the IEEE*, 86(11), 2278–2324. | 10.1109/5.726791 | V | IEEE | Konvolusi dengan bobot bersama |
+| Donahue2017 | Donahue, J., Hendricks, L. A., Rohrbach, M., Venugopalan, S., Guadarrama, S., Saenko, K., & Darrell, T. (2017). Long-term recurrent convolutional networks for visual recognition and description. *IEEE TPAMI*, 39(4), 677–691. | 10.1109/TPAMI.2016.2599174 | V | IEEE; gratis arXiv 1411.4389 | CNN per langkah waktu, lalu LSTM atas urutan vektor fitur |
+
 ## Jangan dikutip dulu
 
 Isinya belum terbaca atau statusnya belum jelas: Harvey dkk. 2012, Gyau-Boakye &
 Schultz 1994, Vogel & Stedinger 1985 (MOVE.3), Kirschstein & Sun 2024, Sit 2021,
-Weißenborn (preprint), Strahler/Horton/Miller/Schumm untuk rasio kebulatan.
+Strahler/Horton/Miller/Schumm untuk rasio kebulatan. Pracetak Weißenborn sudah
+digantikan versi terbitnya (Weißenborn2025, bagian G).
