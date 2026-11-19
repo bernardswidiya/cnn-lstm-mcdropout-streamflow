@@ -13,6 +13,7 @@ Proyek Individu · Teknologi Informasi, DTETI, Universitas Gadjah Mada
 raw/              data mentah hasil unduhan, belum diolah
 preprocessing/    skrip pengunduh 00a–00e dan satu notebook preprocessing
 processed/        data siap latih
+modeling/         notebook pemodelan 01–03, modul pemodelan.py, hasil/ (log run dan tabel)
 figur/            gambar yang disimpan oleh notebook
 references/       daftar referensi (PDF tidak disimpan di repo)
 ```
@@ -284,7 +285,8 @@ lintasan, pantulan 30 hari; Ladson dkk., 2013), seperti CAMELS.
 
 Butuh `pandas`, `numpy`, `matplotlib`, `requests`, `openpyxl`, `jupyter`,
 `geopandas`, `rioxarray`, `statsmodels`, serta `pynhd`, `py3dep`, dan
-`pygridmet` dari HyRiver. Langkah Daymet memerlukan akun NASA Earthdata yang
+`pygridmet` dari HyRiver. Tahap pemodelan (`modeling/`) menambah `tensorflow`
+(2.20, Keras 3). Langkah Daymet memerlukan akun NASA Earthdata yang
 ditulis di `~/.netrc` (`machine urs.earthdata.nasa.gov login ... password ...`);
 langkah lain tanpa akun.
 

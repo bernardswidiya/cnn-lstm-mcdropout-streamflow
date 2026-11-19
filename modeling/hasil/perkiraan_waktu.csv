@@ -1,0 +1,19 @@
+tahap,langkah,isi,run_baru,jam,jam_bila_300_epoch
+A,A1,jendela 7 hari,9,0.076,0.273
+A,A1,jendela 8 hari,9,0.085,0.307
+A,A1,jendela 21 hari,9,0.211,0.76
+A,A1,jendela 28 hari,9,0.265,0.955
+A,A1,jendela 56 hari,9,0.523,1.887
+A,A2,hujan GHCN (jendela 14),9,0.165,0.593
+A,A3,"log10(√x + 0,1) (jendela 14)",9,0.165,0.593
+A,A4,V18 (jendela 14),9,0.147,0.531
+A,A4,V21 (jendela 14),9,0.163,0.587
+B,LSTM target,24 titik x 3 seed x 3 horizon,216,1.097,4.769
+B,LSTM target,3 finalis x 5 seed tambahan x 3 horizon,45,0.229,0.993
+B,LSTM target,"MC Dropout 1.000 lintasan, 3 finalis x 8 seed x 3 horizon",0,0.255,0.255
+B,S_LSTM ala Le,24 titik x 3 seed x 3 horizon,216,1.514,5.249
+B,S_LSTM ala Le,3 finalis x 5 seed tambahan x 3 horizon,45,0.315,1.093
+B,S_LSTM ala Le,"MC Dropout 1.000 lintasan, 3 finalis x 8 seed x 3 horizon",0,0.319,0.319
+B,CNN-LSTM,24 titik x 3 seed x 3 horizon,216,4.866,17.541
+B,CNN-LSTM,3 finalis x 5 seed tambahan x 3 horizon,45,1.014,3.654
+B,CNN-LSTM,"MC Dropout 1.000 lintasan, 3 finalis x 8 seed x 3 horizon",0,0.858,0.858
