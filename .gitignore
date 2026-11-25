@@ -12,7 +12,7 @@ raw/hujan/ghcnd-inventory.txt
 # PDF jurnal tidak disimpan di repo (lihat references/README.md)
 references/*.pdf
 
-# cache unduhan HyRiver (aiohttp)
+# cache: unduhan HyRiver, bobot model, lintasan MC Dropout (cache/mc_val_tau)
 cache/
 
 # log proses pekerja (sementara, digabung ke log_run.csv)
