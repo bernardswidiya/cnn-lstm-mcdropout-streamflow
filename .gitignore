@@ -14,3 +14,6 @@ references/*.pdf
 
 # cache unduhan HyRiver (aiohttp)
 cache/
+
+# log proses pekerja (sementara, digabung ke log_run.csv)
+modeling/hasil/log_run_p*.csv

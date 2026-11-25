@@ -1,0 +1,122 @@
+{
+  "notebook": "preprocessing/preprocessing.ipynb, Bagian VIII (tahap 31-36)",
+  "sumber": [
+    "NOAA GHCN-Daily PRCP (raw/hujan/dly)",
+    "NOAA NCEI COOP HPD v2 (raw/hujan/hpd)",
+    "tensor V17 tahap 28 untuk kanal selain hujan dan Daymet tergeser"
+  ],
+  "stasiun": {
+    "kandidat": 53,
+    "dipakai": 43,
+    "bacaan_pagi": [
+      "USC00460939",
+      "USC00446955",
+      "USC00448022",
+      "USC00460102",
+      "USC00440766",
+      "USC00465224",
+      "USC00441692",
+      "USC00469522",
+      "USC00441999",
+      "USC00468308",
+      "USC00442044",
+      "USC00447278",
+      "USC00443310",
+      "USC00444128",
+      "USC00460509",
+      "USC00445595",
+      "USC00444148",
+      "USC00444876",
+      "USC00443375",
+      "USC00441159",
+      "USC00446593",
+      "USC00448062",
+      "USC00441955",
+      "USC00441082",
+      "USC00442208",
+      "USC00448941",
+      "USC00440243",
+      "USC00441136",
+      "USC00441593",
+      "USC00442941",
+      "USC00446491",
+      "USC00445096",
+      "USC00447904",
+      "USC00446712",
+      "USC00442142"
+    ],
+    "hari_yang_sama": [
+      "USC00467207",
+      "USW00013741",
+      "USW00013729",
+      "USC00445880",
+      "USW00013733",
+      "USW00093736",
+      "USC00445050",
+      "USC00440327"
+    ],
+    "hpd": [
+      "USC00443310",
+      "USC00446712",
+      "USC00445595"
+    ],
+    "tetap_dipakai_di_bawah_95%": [
+      "USC00448941",
+      "USC00446712"
+    ]
+  },
+  "aturan": {
+    "kandidat": "USC/USW dalam 50 km dari batas poligon DAS 02035000, PRCP lengkap >= 95.0% 2000-2024",
+    "jam_pengamatan": "korelasi dengan bandara terdekat pada geser 0 dan 1 hari, bagian latih; geser 1 lebih besar = bacaan pagi",
+    "mutu": "aturan tahap 16 (akumulasi, tambal nol gap <= 7 hari dari tetangga 30 km) di kalender selaras",
+    "hpd": "jumlah 24 jam hari kalender waktu setempat (UTC-5); hari dengan jam kosong atau ber-QF = kosong",
+    "titik": "IDW 1/d^2 stasiun dalam 50 km yang punya data; cadangan stasiun terdekat yang punya data (tahap 17b)",
+    "das": "titik grid 1 km di poligon DAS (EPSG:5070); IDW 1/d^2 stasiun dalam 50 km; cadangan 3 terdekat; rata-rata",
+    "hari_yang_sama": "selalu 3 stasiun hari yang sama terdekat yang punya data, tanpa radius",
+    "kalender_input": "tanggal file .dly dan hari kalender HPD, tanpa geser",
+    "skala": "log1p lalu standardisasi per pos, rata-rata dan std bagian latih, ddof=0"
+  },
+  "akumulasi_dikosongkan": {
+    "USC00441955": [
+      "2003-09-22"
+    ]
+  },
+  "hari_diisi_nol": 1053,
+  "kelengkapan_hpd_2000_2024_%": {
+    "Gathright": 87.5,
+    "Piedmont": 72.3,
+    "MillGap": 53.2
+  },
+  "sel_cadangan_%_maks": {
+    "rapat_idw_titik": 0.0,
+    "pagi_titik": 0.0,
+    "sama_titik": 0.0,
+    "sama_hpd_titik": 0.0,
+    "rapat_das": 0.0,
+    "pagi_das": 0.0,
+    "sama_das": 0.0,
+    "sama_hpd_das": 0.0
+  },
+  "varian": {
+    "R0": 10,
+    "R1": 10,
+    "R2": 10,
+    "R3_titik": 11,
+    "R3_das": 11,
+    "R4_titik": 11,
+    "R4_das": 11,
+    "R5_R1": 11,
+    "R5_R2": 11,
+    "R5_R3_titik": 12,
+    "R5_R3_das": 12,
+    "R5_R4_titik": 12,
+    "R5_R4_das": 12
+  },
+  "pemeriksaan": [
+    "sha256 file raw/ lama tidak berubah",
+    "klasifikasi jam dan skala hanya dari bagian latih (uji acak)",
+    "kanal hujan posisi t hanya memuat tanggal <= t; HPD hanya jam 00.00-23.59 hari t",
+    "sampel dan tanggal target sama di semua varian dan sama dengan tensor V17",
+    "R0 identik dengan tensor V17 + kanal GHCN IDW tahap 26"
+  ]
+}

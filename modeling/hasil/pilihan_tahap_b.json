@@ -1,0 +1,72 @@
+{
+  "konfigurasi_data": {
+    "varian": "V17",
+    "jendela": 8,
+    "hujan": "ghcn_idw",
+    "transformasi": "log1p"
+  },
+  "mesin": "x86_64-NVIDIA GeForce RTX 4060",
+  "desain": {
+    "seed": 0,
+    "kembar_awal_dan_penukaran": {
+      "cnn_lstm": [
+        2,
+        10
+      ],
+      "lstm": [
+        5,
+        41
+      ]
+    }
+  },
+  "model": {
+    "cnn_lstm": {
+      "titik": "T21",
+      "cfg": {
+        "lr": 0.001,
+        "unit": 128,
+        "lapisan_lstm": 2,
+        "dropout": 0.25,
+        "kernel": 3,
+        "lapisan_konv": 1
+      },
+      "finalis": [
+        "T12",
+        "T21",
+        "T20"
+      ]
+    },
+    "s_lstm": {
+      "titik": "T05",
+      "cfg": {
+        "lr": 0.001,
+        "unit": 64,
+        "lapisan_lstm": 2,
+        "dropout": 0.4,
+        "kernel": 2,
+        "lapisan_konv": 1
+      },
+      "finalis": [
+        "T05",
+        "T17",
+        "T10"
+      ]
+    },
+    "lstm_target": {
+      "titik": "T08",
+      "cfg": {
+        "lr": 0.001,
+        "unit": 64,
+        "lapisan_lstm": 1,
+        "dropout": 0.1,
+        "kernel": 2,
+        "lapisan_konv": 1
+      },
+      "finalis": [
+        "T08",
+        "T16",
+        "T20"
+      ]
+    }
+  }
+}

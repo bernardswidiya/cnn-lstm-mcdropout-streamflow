@@ -1,0 +1,38 @@
+{
+  "cara_pemetaan_R3_R4": "titik",
+  "dasar_R5": "R3_titik",
+  "urutan": [
+    "R0",
+    "R1",
+    "R2",
+    "R3_titik",
+    "R4_titik",
+    "R5_R3_titik"
+  ],
+  "terbaik": "R3_titik",
+  "batas_setara": 0.70922,
+  "setara": [
+    "R3_titik",
+    "R5_R3_titik"
+  ],
+  "terpilih": "R3_titik",
+  "hujan_log": "v2_R3_titik",
+  "kanal_per_pos": 11,
+  "kanal_hujan": [
+    "pagi_titik",
+    "sama_titik"
+  ],
+  "mesin": "x86_64-NVIDIA GeForce RTX 4060",
+  "konfigurasi": {
+    "varian": "V17",
+    "jendela": 8,
+    "transformasi": "log1p",
+    "model": "cnn_lstm",
+    "cfg": "pengaturan tengah",
+    "seed": [
+      0,
+      1,
+      2
+    ]
+  }
+}
