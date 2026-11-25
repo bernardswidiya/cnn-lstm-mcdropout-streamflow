@@ -13,6 +13,8 @@
 | `hasil/tahap_r_*.csv`, `hasil/pilihan_tahap_r.json` | Hasil tahap R (varian hujan v2 R0–R5) per run, ringkasan, dan varian terpilih |
 | `hasil/tahap_r3_final_*.csv`, `hasil/tahap_r3_regresi_linear.csv` | Model terpilih tahap B dengan data R3_titik (8 seed, MC Dropout) dan regresi linear |
 | `hasil/ablasi_data_*.csv` | Ablasi kontribusi data CNN-LSTM T21: debit, + hujan, + suhu, + atribut |
+| `hasil/ablasi_atribut_acak_*.csv` | Kontrol atribut acak [Li2022] untuk CNN-LSTM T21 |
+| `hasil/perbandingan_final_validasi.csv` | Alur utama: CNN-LSTM T21 (R3_titik) dan ARIMA, persistensi sebagai acuan; S_LSTM, LSTM target, dan regresi linear hanya lampiran |
 
 Pilihan data tahap A yang tensornya tidak ada di `processed/` (jendela selain 14
 hari, hujan GHCN, log10(√x + 0,1)) disusun di memori oleh `tensor_pilihan`: deret

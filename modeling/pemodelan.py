@@ -103,6 +103,7 @@ def varian_v2():
 ABLASI_V2 = {"debit": ["debit_terskala", "flag_isian"],
              "debit_hujan": ["debit_terskala", "flag_isian", "hujan"],
              "debit_hujan_suhu": ["debit_terskala", "flag_isian", "hujan", "tmax_terskala", "tmin_terskala"]}
+ATR_A = ["log_luas", "elev_rata_das_m", "kemiringan_das_m_per_km", "hujan_tahunan_mm"]   # tingkat A, tahap 13
 
 
 def muat_latih_val_v2(h, kode, varian="V17", jendela=8, transformasi="log1p"):
@@ -128,7 +129,14 @@ def muat_latih_val_v2(h, kode, varian="V17", jendela=8, transformasi="log1p"):
     X = np.concatenate([Xd[..., :pos_h], Xh, Xd[..., pos_h:]], axis=-1)
     assert X.shape[-1] == info_v["kanal_per_pos"]
     kanal = kanal_d[:pos_h] + info_v["kanal_hujan"] + kanal_d[pos_h:]
-    if ablasi:
+    if ablasi == "atribut_acak":
+        # kontrol [Li2022], sama dengan varian_ablasi preprocessing tahap 30: empat atribut tingkat A diganti
+        # vektor normal baku tetap per pos (benih 0); bfi_latih (tingkat B) dan kanal dinamis tidak berubah
+        j_a = [kanal.index(k) for k in ATR_A]
+        acak = np.random.default_rng(0).standard_normal((X.shape[2], len(ATR_A))).astype(X.dtype)
+        X = X.copy()
+        X[..., j_a] = acak[None, None, :, :]
+    elif ablasi:
         simpan = [k for g in ABLASI_V2[ablasi] for k in (info_v["kanal_hujan"] if g == "hujan" else [g])]
         j_ = [kanal.index(k) for k in simpan]
         assert j_[0] == 0, "kanal debit harus tetap kanal 0"
