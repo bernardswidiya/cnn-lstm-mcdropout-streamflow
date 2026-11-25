@@ -481,9 +481,9 @@ def nll_heteroskedastik(y_true, y_pred):
 def bentuk_masukan(X, model, i_target):
     """Susun tensor (sampel, jendela, pos, kanal) sesuai masukan tiap model."""
     model = model.removesuffix("_het")
-    if model == "cnn_lstm":
+    if model in ("cnn_lstm", "cnn"):
         return X
-    if model == "s_lstm":                       # 17 pos × 10 kanal diratakan, tanpa sumbu pos
+    if model in ("s_lstm", "lstm"):             # pos × kanal diratakan per hari, tanpa sumbu pos
         return X.reshape(X.shape[0], X.shape[1], -1)
     if model == "lstm_target":                  # kanal pos target saja
         return X[:, :, i_target, :]
@@ -500,7 +500,7 @@ def bangun_model(model, cfg, bentuk):
     model = model.removesuffix("_het")
     x_in = keras.Input(shape=bentuk)
     x = x_in
-    if model == "cnn_lstm":
+    if model in ("cnn_lstm", "cnn"):
         # Conv1D di sumbu pos pada setiap langkah waktu; ditulis sebagai Conv2D dengan kernel 1×k,
         # yang secara matematis sama dengan Conv1D yang dibagi bobotnya di semua langkah waktu
         for _ in range(cfg["lapisan_konv"]):
@@ -508,7 +508,12 @@ def bangun_model(model, cfg, bentuk):
                               kernel_initializer=init)(x)
         x = layers.Dropout(cfg["dropout"])(x)
         x = layers.Reshape((bentuk[0], -1))(x)          # ratakan: (jendela, pos' × filter)
-    for j in range(cfg["lapisan_lstm"]):
+    if model == "cnn":
+        # CNN tanpa LSTM (tahap D, [Ghimire2021]): ratakan seluruh langkah waktu -> Dense -> dropout
+        x = layers.Flatten()(x)
+        x = layers.Dense(cfg["unit"], activation="relu", kernel_initializer=init)(x)
+        x = layers.Dropout(cfg["dropout"])(x)
+    for j in range(0 if model == "cnn" else cfg["lapisan_lstm"]):
         akhir = j == cfg["lapisan_lstm"] - 1
         x = layers.LSTM(cfg["unit"], return_sequences=not akhir, kernel_initializer=init)(x)
         x = layers.Dropout(cfg["dropout"])(x)
