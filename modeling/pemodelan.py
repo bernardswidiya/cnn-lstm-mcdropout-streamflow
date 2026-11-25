@@ -461,8 +461,26 @@ TENGAH = {  # pengaturan tengah tahap A
 }
 
 
+# Keluaran heteroskedastik (tahap C, [Sun2026] pers. 10, [Kendall2017]): Dense(2) = (mu, s = log sigma^2) dalam skala z
+# target; s dijepit ke S_JEPIT di loss dan di prediksi supaya exp(-s) dan exp(s) tetap stabil.
+S_JEPIT = (-10.0, 6.0)          # sigma_z antara e^-5 (0,007) dan e^3 (20) simpangan baku debit target
+
+
+def heteroskedastik(model):
+    return model.endswith("_het")
+
+
+def nll_heteroskedastik(y_true, y_pred):
+    """Loss per sampel exp(-s)(y - mu)^2 + s; rata-ratanya adalah pers. 10 Sun dkk. (2026) (tanpa konstanta)."""
+    from keras import ops
+    y = ops.reshape(ops.cast(y_true, y_pred.dtype), (-1,))
+    mu, s = y_pred[:, 0], ops.clip(y_pred[:, 1], S_JEPIT[0], S_JEPIT[1])
+    return ops.exp(-s) * ops.square(y - mu) + s
+
+
 def bentuk_masukan(X, model, i_target):
     """Susun tensor (sampel, jendela, pos, kanal) sesuai masukan tiap model."""
+    model = model.removesuffix("_het")
     if model == "cnn_lstm":
         return X
     if model == "s_lstm":                       # 17 pos × 10 kanal diratakan, tanpa sumbu pos
@@ -478,6 +496,8 @@ def bangun_model(model, cfg, bentuk):
     import keras
     from keras import layers
     init = TETAP["inisialisasi"]
+    het = heteroskedastik(model)
+    model = model.removesuffix("_het")
     x_in = keras.Input(shape=bentuk)
     x = x_in
     if model == "cnn_lstm":
@@ -492,9 +512,10 @@ def bangun_model(model, cfg, bentuk):
         akhir = j == cfg["lapisan_lstm"] - 1
         x = layers.LSTM(cfg["unit"], return_sequences=not akhir, kernel_initializer=init)(x)
         x = layers.Dropout(cfg["dropout"])(x)
-    y = layers.Dense(1, kernel_initializer=init)(x)
-    m = keras.Model(x_in, y, name=model)
-    m.compile(optimizer=keras.optimizers.Adam(learning_rate=cfg["lr"]), loss=TETAP["loss"])
+    y = layers.Dense(2 if het else 1, kernel_initializer=init)(x)
+    m = keras.Model(x_in, y, name=model + ("_het" if het else ""))
+    m.compile(optimizer=keras.optimizers.Adam(learning_rate=cfg["lr"]),
+              loss=nll_heteroskedastik if het else TETAP["loss"])
     return m
 
 
@@ -518,7 +539,8 @@ def latih(model, cfg, data, seed, verbose=0, epoch_maks=None):
                  shuffle=True, callbacks=[es], verbose=verbose)
     detik = time.perf_counter() - t0
     vl = np.asarray(hist.history["val_loss"])
-    pred = ke_m3s(m.predict(Xv, batch_size=2048, verbose=0).ravel(), data)
+    keluar = m.predict(Xv, batch_size=2048, verbose=0)
+    pred = ke_m3s(keluar[:, 0] if heteroskedastik(model) else keluar.ravel(), data)   # mu, dropout nonaktif
     obs = ke_m3s(data["y_val"], data)
     ringkas = dict(epoch_terbaik=int(vl.argmin()) + 1, n_epoch=len(vl), waktu_latih_s=round(detik, 2),
                    val_loss_terbaik=float(vl.min()), prediksi=pred, observasi=obs,
@@ -529,6 +551,14 @@ def latih(model, cfg, data, seed, verbose=0, epoch_maks=None):
 # ---------------------------------------------------------------------------
 # Log run
 # ---------------------------------------------------------------------------
+def konfig_json(model, cfg):
+    """Konfigurasi lengkap untuk log: cfg + pengaturan tetap; model heteroskedastik mencatat loss-nya sendiri."""
+    k = {**cfg, **TETAP}
+    if heteroskedastik(model):
+        k["loss"] = "nll_heteroskedastik"
+    return json.dumps(k, sort_keys=True)
+
+
 KOLOM_LOG = ["waktu", "id_run", "mesin", "notebook", "tahap", "model", "varian", "jendela", "hujan", "transformasi",
              "horizon", "seed", "konfigurasi", "n_param", "epoch_terbaik", "n_epoch", "waktu_latih_s",
              "val_loss_terbaik", "NSE", "KGE", "RMSE", "MAE"]
@@ -542,7 +572,7 @@ def catat_run(notebook, tahap, model, cfg, data, seed, ringkas, jendela=14, huja
     baris = dict(waktu=datetime.now().isoformat(timespec="seconds"), id_run=id_run, mesin=mesin(), notebook=notebook,
                  tahap=tahap, model=model, varian=data["varian"], jendela=jendela, hujan=hujan,
                  transformasi=transformasi, horizon=data["h"], seed=seed,
-                 konfigurasi=json.dumps({**cfg, **TETAP}, sort_keys=True),
+                 konfigurasi=konfig_json(model, cfg),
                  **{k: ringkas[k] for k in ["n_param", "epoch_terbaik", "n_epoch", "waktu_latih_s",
                                             "val_loss_terbaik", "NSE", "KGE", "RMSE", "MAE"]})
     pd.DataFrame([baris], columns=KOLOM_LOG).to_csv(LOG_PROSES, mode="a", header=not LOG_PROSES.exists(), index=False)
@@ -590,7 +620,7 @@ def cari_run(model, cfg, varian, jendela, hujan, transformasi, h, seed, log=None
     log = baca_log() if log is None else log
     if not len(log):
         return None
-    konf = json.dumps({**cfg, **TETAP}, sort_keys=True)
+    konf = konfig_json(model, cfg)
     c = log[(log["mesin"] == mesin()) & (log["model"] == model) & (log["varian"] == varian)
             & (log["jendela"] == jendela) & (log["hujan"] == hujan) & (log["transformasi"] == transformasi)
             & (log["horizon"] == h) & (log["seed"] == seed) & (log["konfigurasi"] == konf)]
@@ -659,7 +689,7 @@ def jalankan(notebook, tahap, model, cfg, data, seed, jendela=None, hujan=None, 
     jendela = data.get("jendela", 14) if jendela is None else jendela
     hujan = data.get("hujan", "daymet") if hujan is None else hujan
     transformasi = data.get("transformasi", "log1p") if transformasi is None else transformasi
-    konf = json.dumps({**cfg, **TETAP}, sort_keys=True)
+    konf = konfig_json(model, cfg)
     log = baca_log()
     if not ulang and len(log):
         cocok = log[(log["mesin"] == mesin()) & (log["model"] == model) & (log["varian"] == data["varian"])
@@ -699,6 +729,35 @@ def mc_dropout(m, X, lintasan, seed):
     return out
 
 
+MC_HET = ROOT / "cache" / "mc_het"     # lintasan (mu, s) model heteroskedastik (tidak masuk git)
+N_SAMPEL_HET = 10                         # sampel N(mu_i, sigma_i^2) per lintasan [Sun2026]
+
+
+def benih_sampel_het(h, seed):
+    return 2026_000 + 100 * h + seed
+
+
+def lintasan_het(m, X, lintasan, seed):
+    """MC Dropout untuk keluaran heteroskedastik: (mu, s) per lintasan, skala z, s dijepit ke S_JEPIT."""
+    import keras, tensorflow as tf
+    keras.utils.set_random_seed(seed)
+    f = tf.function(lambda x: m(x, training=True))
+    xv = tf.constant(X)
+    mu, s = np.empty((lintasan, len(X)), np.float32), np.empty((lintasan, len(X)), np.float32)
+    for i in range(lintasan):
+        o = f(xv).numpy()
+        mu[i], s[i] = o[:, 0], np.clip(o[:, 1], *S_JEPIT)
+    return mu, s
+
+
+def sampel_het(mu, s, data, benih, n=N_SAMPEL_HET):
+    """n sampel N(mu_i, exp(s_i)) per lintasan, dikembalikan ke m3/s: larik (lintasan x n, sampel)."""
+    rng = np.random.default_rng(benih)
+    z = mu[:, None, :].astype(np.float64) + np.exp(s[:, None, :].astype(np.float64) / 2) * rng.standard_normal(
+        (mu.shape[0], n, mu.shape[1]))
+    return ke_m3s(z.reshape(-1, mu.shape[1]), data)
+
+
 def jalankan_finalis(notebook, tahap, model, cfg, data, seed):
     """Run finalis: latih (atau latih ulang bila run sudah ada di log tetapi bobotnya belum disimpan), simpan
     bobot, lalu hitung MC Dropout 1.000 lintasan di bagian validasi. Latih ulang harus menghasilkan val_loss dan
@@ -718,11 +777,22 @@ def jalankan_finalis(notebook, tahap, model, cfg, data, seed):
     m.save_weights(BOBOT / f"{id_run}.weights.h5")
     Xv = bentuk_masukan(data["X_val"], model, data["i_target"])
     t0 = time.perf_counter()
-    S = ke_m3s(mc_dropout(m, Xv, N_LINTASAN, seed), data)
+    tambahan = {}
+    if heteroskedastik(model):
+        # MC dua tahap [Sun2026]: lintasan (mu_i, s_i) disimpan di cache, lalu N_SAMPEL_HET sampel N(mu_i, e^s_i) per lintasan
+        MC_HET.mkdir(parents=True, exist_ok=True)
+        mu, s = lintasan_het(m, Xv, N_LINTASAN, seed)
+        benih_s = benih_sampel_het(data["h"], seed)
+        np.savez_compressed(MC_HET / f"{id_run}.npz", mu=mu, s=s, idx_val=data["idx_val"], benih_mc=seed,
+                            benih_sampel=benih_s, n_sampel=N_SAMPEL_HET, s_jepit=np.array(S_JEPIT))
+        S = sampel_het(mu, s, data, benih_s)
+        tambahan = dict(prediksi_mc=S.mean(0), benih_mc=seed, benih_sampel=benih_s, n_sampel=N_SAMPEL_HET)
+    else:
+        S = ke_m3s(mc_dropout(m, Xv, N_LINTASAN, seed), data)
     q = np.quantile(S, [0.025, 0.16, 0.84, 0.975], axis=0)
     np.savez_compressed(MC_VAL / f"{id_run}.npz", idx_val=data["idx_val"], observasi=ke_m3s(data["y_val"], data),
                         prediksi=r["prediksi"], rata=S.mean(0), sb=S.std(0), q025=q[0], q16=q[1], q84=q[2], q975=q[3],
-                        lintasan=N_LINTASAN, detik_mc=time.perf_counter() - t0)
+                        lintasan=N_LINTASAN, detik_mc=time.perf_counter() - t0, **tambahan)
     return r | dict(id_run=id_run, model=model, horizon=data["h"], seed=seed, dari_log=b is not None,
                     latih_ulang=b is not None)
 

@@ -1,0 +1,27 @@
+{
+  "terpilih": "B",
+  "calon": [
+    "B"
+  ],
+  "terkalibrasi": {
+    "A": false,
+    "B": true,
+    "C": false
+  },
+  "C_lolos_syarat_NSE": false,
+  "batas_NSE": 0.70666,
+  "Q1_latih_m3s": 57.766,
+  "Q3_latih_m3s": 220.871,
+  "s_jepit": [
+    -10.0,
+    6.0
+  ],
+  "n_sampel_per_lintasan": 10,
+  "lintasan": 1000,
+  "benih": {
+    "mc": "seed run",
+    "derau_B": "2016000 + 100*h + seed",
+    "sampel_C": "2026000 + 100*h + seed"
+  },
+  "mesin": "x86_64-NVIDIA GeForce RTX 4060"
+}
