@@ -1,0 +1,8 @@
+{
+  "jendela": 8,
+  "hujan": "ghcn_idw",
+  "transformasi": "log1p",
+  "varian": "V17",
+  "mesin": "x86_64-NVIDIA GeForce RTX 4060",
+  "kriteria": "rata-rata NSE validasi h1-3 atas 3 seed; setara bila NSE >= NSE terbaik - sb antar-seed konfigurasi terbaik; di antara yang setara dipilih yang paling sederhana"
+}

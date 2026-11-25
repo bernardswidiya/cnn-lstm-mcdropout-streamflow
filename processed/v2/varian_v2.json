@@ -1,0 +1,110 @@
+{
+  "posisi_hujan": 2,
+  "jendela": 8,
+  "varian_pos": "V17",
+  "susunan_kanal": "debit, flag, <kanal hujan varian>, tmax, tmin, 5 atribut",
+  "varian": {
+    "R0": {
+      "kanal_hujan": [
+        "ghcn16_idw_titik"
+      ],
+      "kanal_per_pos": 10
+    },
+    "R1": {
+      "kanal_hujan": [
+        "rapat_idw_titik"
+      ],
+      "kanal_per_pos": 10
+    },
+    "R2": {
+      "kanal_hujan": [
+        "rapat_das"
+      ],
+      "kanal_per_pos": 10
+    },
+    "R3_titik": {
+      "kanal_hujan": [
+        "pagi_titik",
+        "sama_titik"
+      ],
+      "kanal_per_pos": 11
+    },
+    "R3_das": {
+      "kanal_hujan": [
+        "pagi_das",
+        "sama_das"
+      ],
+      "kanal_per_pos": 11
+    },
+    "R4_titik": {
+      "kanal_hujan": [
+        "pagi_titik",
+        "sama_hpd_titik"
+      ],
+      "kanal_per_pos": 11
+    },
+    "R4_das": {
+      "kanal_hujan": [
+        "pagi_das",
+        "sama_hpd_das"
+      ],
+      "kanal_per_pos": 11
+    },
+    "R5_R1": {
+      "kanal_hujan": [
+        "rapat_idw_titik",
+        "daymet_tergeser"
+      ],
+      "kanal_per_pos": 11
+    },
+    "R5_R2": {
+      "kanal_hujan": [
+        "rapat_das",
+        "daymet_tergeser"
+      ],
+      "kanal_per_pos": 11
+    },
+    "R5_R3_titik": {
+      "kanal_hujan": [
+        "pagi_titik",
+        "sama_titik",
+        "daymet_tergeser"
+      ],
+      "kanal_per_pos": 12
+    },
+    "R5_R3_das": {
+      "kanal_hujan": [
+        "pagi_das",
+        "sama_das",
+        "daymet_tergeser"
+      ],
+      "kanal_per_pos": 12
+    },
+    "R5_R4_titik": {
+      "kanal_hujan": [
+        "pagi_titik",
+        "sama_hpd_titik",
+        "daymet_tergeser"
+      ],
+      "kanal_per_pos": 12
+    },
+    "R5_R4_das": {
+      "kanal_hujan": [
+        "pagi_das",
+        "sama_hpd_das",
+        "daymet_tergeser"
+      ],
+      "kanal_per_pos": 12
+    }
+  },
+  "keterangan": {
+    "R0": "GHCN IDW titik 50 km, 16 stasiun (kanal tahap 26, pilihan tahap A)",
+    "R1": "P1: 43 stasiun, IDW titik 50 km",
+    "R2": "P1 + P3: 43 stasiun, rata-rata IDW grid 1 km per DAS",
+    "R3_titik": "P1 + P2: kanal bacaan pagi (IDW titik 50 km) dan hari yang sama (3 terdekat, titik)",
+    "R3_das": "P1 + P2: kanal bacaan pagi dan hari yang sama, rata-rata per DAS",
+    "R4_titik": "R3_titik + HPD di kanal hari yang sama",
+    "R4_das": "R3_das + HPD di kanal hari yang sama",
+    "R5_<dasar>": "varian dasar + kanal Daymet tergeser (P4)"
+  }
+}

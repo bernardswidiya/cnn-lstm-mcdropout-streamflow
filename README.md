@@ -11,7 +11,7 @@ Proyek Individu · Teknologi Informasi, DTETI, Universitas Gadjah Mada
 
 ```
 raw/              data mentah hasil unduhan, belum diolah
-preprocessing/    skrip pengunduh 00a–00e dan satu notebook preprocessing
+preprocessing/    skrip pengunduh 00a–00f dan satu notebook preprocessing
 processed/        data siap latih
 modeling/         notebook pemodelan 01–03, modul pemodelan.py, hasil/ (log run dan tabel)
 figur/            gambar yang disimpan oleh notebook
@@ -33,6 +33,9 @@ pos. Penggabungan, pengisian gap, dan pemilihan pos dilakukan di notebook.
 | `raw/spatial/atribut_turunan.csv` | Jarak alur, kemiringan, bentuk DAS |
 | `raw/hujan/dly/<ID>.dly` | Hujan harian GHCN-Daily, format `.dly` asli |
 | `raw/hujan/stasiun_terpakai.txt` | Koordinat 16 stasiun hujan, saringan `ghcnd-stations.txt` |
+| `raw/hujan/stasiun_v2.txt`, `inventory_v2.txt` | Baris `ghcnd-stations.txt` dan `ghcnd-inventory.txt` untuk 53 kandidat hujan v2 (skrip `00f`) |
+| `raw/hujan/hpd/` | COOP Hourly Precipitation Data v2: Gathright Dam, Piedmont, Mill Gap, inventaris, dan readme |
+| `raw/hujan/hash_raw_lama.sha256` | SHA-256 file `raw/` sebelum unduhan v2, untuk memeriksa file lama tetap utuh |
 | `raw/network/dm/<kode>.json` | Navigasi hilir NLDI (DM, 600 km) per pos |
 | `raw/network/basin/<kode>.json` | Poligon DAS NLDI per pos, tidak disederhanakan |
 | `raw/network/peta/ut_02035000.json` | Seluruh alur hulu dari pos target (UT, 600 km) |
@@ -40,7 +43,7 @@ pos. Penggabungan, pengisian gap, dan pemilihan pos dilakukan di notebook.
 | `raw/iklim/cek_kabisat_daymet.csv` | Bukti 31 Desember tahun kabisat tidak ada di Daymet |
 | `raw/iklim/gridmet_isi_kabisat.csv` | gridMET rata-rata DAS untuk 31 Desember tahun kabisat |
 | `raw/spatial/dem/<kode>.tif` | DEM 3DEP per poligon DAS (EPSG:5070) |
-| `preprocessing/00a` – `00e` | Pengunduh, satu per sumber data |
+| `preprocessing/00a` – `00f` | Pengunduh, satu per sumber data; `00f` untuk hujan v2 (stasiun GHCN tambahan dan HPD) |
 | `preprocessing/preprocessing.ipynb` | Seluruh pengolahan beserta gambar dan tabel, bertahap dalam satu notebook |
 | `raw/iklim/daymet_<kode>.csv` | Hujan, Tmax, Tmin Daymet V4 R1 rata-rata poligon DAS per pos |
 | `raw/iklim/daymet_19991231.csv` | Daymet 31 Desember 1999, untuk posisi pertama input yang digeser |
@@ -50,6 +53,7 @@ pos. Penggabungan, pengisian gap, dan pemilihan pos dilakukan di notebook.
 | `processed/debit_isi_m3s.csv`, `flag_isian.csv`, `catatan_isian.csv` | Debit setelah pengisian gap, flag isian, dan metode per pos |
 | `processed/iklim/` | Hujan, Tmax, Tmin Daymet per pos setelah 31 Desember kabisat diisi |
 | `processed/hujan/` | Hujan harian per stasiun dan per pos, mutu stasiun, `metadata_hujan.json` |
+| `processed/v2/` | Hujan v2 (preprocessing Bagian VIII): `tensor_h{1,2,3}.npz` jendela 8 hari dengan `X_dasar` dan `X_hujan`, `varian_v2.json` (varian R0–R5), hujan harian 43 stasiun + 3 HPD, hujan per pos, tabel stasiun dan metadata |
 | `processed/mutu_semua_pos.csv` | Pemeriksaan mutu seluruh pos |
 | `processed/metadata.json` | Seluruh parameter dan alasannya |
 

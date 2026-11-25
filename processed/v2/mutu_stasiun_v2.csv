@@ -1,0 +1,44 @@
+stasiun,label,golongan,jarak_das_km,lengkap_awal_%,dicurigai_akumulasi,diisi_nol,tetangga_30km,lengkap_akhir_%,hujan_latih_mm_per_tahun,hujan_maks_mm
+USC00467207,Princeton,hari yang sama,47.7,98.63,0,0,0,98.63,1050.0,146.8
+USC00460939,Bluestone,bacaan pagi,37.8,99.9,0,3,1,99.93,1039.0,65.5
+USC00446955,Pulaski,bacaan pagi,38.4,99.77,0,9,1,99.87,986.0,91.4
+USC00448022,Pearisburg,bacaan pagi,14.9,96.74,0,155,2,98.43,1035.0,96.5
+USC00460102,Alderson,bacaan pagi,28.9,99.27,0,2,2,99.29,1011.0,109.2
+USC00440766,Blacksburg,bacaan pagi,8.9,99.65,0,1,3,99.66,1061.0,112.8
+USC00465224,Lewisburg,bacaan pagi,16.7,99.61,0,2,2,99.63,1031.0,203.2
+USC00441692,Christiansburg,bacaan pagi,17.4,99.69,0,3,2,99.73,1035.0,122.4
+USC00469522,WhiteSulphur,bacaan pagi,5.7,99.35,0,21,2,99.58,1057.0,210.6
+USC00441999,CopperHill,bacaan pagi,27.5,98.28,0,36,3,98.67,1252.0,160.3
+USC00468308,Snowshoe,bacaan pagi,19.2,98.99,0,42,2,99.45,1588.0,109.2
+USC00442044,Covington,bacaan pagi,0.0,99.79,0,10,3,99.9,1017.0,106.7
+USW00013741,RoanokeAP,hari yang sama,9.3,100.0,0,0,2,100.0,1065.0,111.8
+USC00447278,Roanoke8N,bacaan pagi,6.0,99.47,0,6,1,99.54,1135.0,101.6
+USC00443310,Gathright,bacaan pagi,0.0,99.97,0,0,2,99.97,1004.0,88.1
+USW00013729,ElkinsAP,hari yang sama,48.7,99.98,0,0,0,99.98,1166.0,84.3
+USC00444128,HotSprings,bacaan pagi,0.0,98.4,0,57,2,99.03,1159.0,88.9
+USC00460509,Bartow,bacaan pagi,11.4,99.35,0,27,3,99.65,1089.0,86.4
+USC00445595,MillGap,bacaan pagi,0.0,98.93,0,1,3,98.94,1142.0,81.3
+USC00445880,Mustoe,hari yang sama,0.0,96.58,0,74,2,97.39,1194.0,104.1
+USC00444148,Huddleston,bacaan pagi,32.3,99.96,0,0,0,99.96,1096.0,131.1
+USC00444876,Lexington,bacaan pagi,0.0,96.45,0,6,3,96.52,1068.0,103.9
+USC00443375,Glasgow,bacaan pagi,0.0,98.2,0,0,3,98.2,1240.0,142.5
+USC00441159,BuenaVista,bacaan pagi,0.0,97.97,0,9,3,98.07,1063.0,121.9
+USC00446593,PedlarDam,bacaan pagi,0.0,99.31,0,4,3,99.35,1122.0,127.0
+USW00013733,Lynchburg,hari yang sama,1.0,100.0,0,0,1,100.0,1039.0,112.8
+USC00448062,Staunton,bacaan pagi,15.4,98.47,0,8,1,98.55,1014.0,139.7
+USC00441955,Concord,bacaan pagi,6.0,98.61,1,1,3,98.61,1097.0,174.0
+USC00441082,Brookneal,bacaan pagi,26.6,99.87,0,4,1,99.91,1128.0,124.5
+USC00442208,DaleEnterprise,bacaan pagi,30.4,98.9,0,0,0,98.9,971.0,135.9
+USC00448941,Waynesboro,bacaan pagi,4.8,93.47,0,49,1,94.01,1131.0,155.2
+USC00440243,Appomattox,bacaan pagi,4.2,95.81,0,168,1,97.65,1137.0,184.9
+USC00441136,Buckingham,bacaan pagi,0.0,99.22,0,20,2,99.44,1103.0,139.2
+USC00441593,Charlottesv2W,bacaan pagi,0.0,99.31,0,1,1,99.32,1183.0,176.5
+USW00093736,Charlottesville,hari yang sama,0.0,99.92,0,0,2,99.92,1055.0,112.5
+USC00442941,Farmville,bacaan pagi,9.2,97.74,0,46,1,98.25,1080.0,143.0
+USC00446491,Scottsville,bacaan pagi,0.0,98.05,0,16,1,98.23,1076.0,102.9
+USC00445096,Luray,bacaan pagi,35.4,97.44,0,0,0,97.44,1066.0,164.1
+USC00447904,Somerset,bacaan pagi,5.7,95.38,0,26,2,95.66,1078.0,115.6
+USC00446712,Piedmont,bacaan pagi,16.0,90.34,0,234,2,92.9,1037.0,128.0
+USC00445050,Louisa,hari yang sama,14.0,99.75,0,12,1,99.88,1100.0,106.9
+USC00442142,Crozier,bacaan pagi,16.4,97.71,0,0,0,97.71,1124.0,177.0
+USC00440327,Ashland,hari yang sama,45.4,99.87,0,0,0,99.87,1119.0,152.9
