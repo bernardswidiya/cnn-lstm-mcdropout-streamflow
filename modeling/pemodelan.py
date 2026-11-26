@@ -7,8 +7,10 @@ dan pencatatan setiap run ke modeling/hasil/log_run.csv.
 Pagar data uji: notebook 01 dan 02 hanya boleh memanggil `muat_latih_val` dan
 `muat_deret_target`. Keduanya membuang bagian uji sebelum mengembalikan data
 dan gagal (AssertionError) bila ada indeks uji yang ikut termuat. Bagian uji
-hanya dapat dibuka lewat `muat_uji`, yang menolak berjalan sebelum
-modeling/konfigurasi_final.json ditulis dan dikunci oleh notebook 02.
+hanya dapat dibuka lewat `muat_uji` dan `muat_uji_v2` (ditambah deret target
+lengkap `muat_deret_target_semua`), yang menolak berjalan sebelum
+modeling/konfigurasi_final.json ditulis dan dikunci oleh notebook 02. Notebook 03
+menambah pengaman sendiri (BUKA_UJI=1 dan hasil/uji_dibuka.txt).
 """
 import json, os, platform, time
 from datetime import datetime
@@ -106,29 +108,38 @@ ABLASI_V2 = {"debit": ["debit_terskala", "flag_isian"],
 ATR_A = ["log_luas", "elev_rata_das_m", "kemiringan_das_m_per_km", "hujan_tahunan_mm"]   # tingkat A, tahap 13
 
 
-def muat_latih_val_v2(h, kode, varian="V17", jendela=8, transformasi="log1p"):
-    """Tensor v2 (processed/v2/tensor_h{h}.npz) untuk satu varian hujan R0-R5, bagian latih dan validasi saja.
-    X = debit, flag, kanal hujan varian, Tmax, Tmin, 5 atribut. Bagian uji dibuang sebelum dikembalikan.
-    kode boleh diberi akhiran '@<ablasi>' (kunci ABLASI_V2) untuk hanya memakai sebagian kanal."""
-    kode, _, ablasi = kode.partition("@")
+def _sampel_v2(h, kode, varian, jendela, transformasi, pilih_bagian):
+    """Sampel tensor v2 untuk satu varian hujan (tanpa ablasi) pada kode bagian yang dipilih pilih_bagian.
+    X = debit, flag, kanal hujan varian, Tmax, Tmin, 5 atribut. Dipakai muat_latih_val_v2 (bagian <= 1) dan
+    muat_uji_v2 (bagian >= 2); baris yang tidak dipilih dibuang sebelum nilainya dibaca ke memori."""
     info_v = varian_v2()[kode]
     with np.load(V2 / f"tensor_h{h}.npz", allow_pickle=True) as d:
         assert (varian, jendela, transformasi) == (str(d["varian"]), int(d["jendela"]), "log1p"), \
             "tensor v2 hanya tersedia untuk V17, jendela 8 hari, log1p"
         it, pos_h = int(d["i_target"]), int(d["posisi_hujan"])
         bagian = d["bagian"]
-        pilih = bagian <= 1
+        pilih = pilih_bagian(bagian)
         nama_h = [str(k) for k in d["kanal_hujan"]]
         j = [nama_h.index(k) for k in info_v["kanal_hujan"]]
         Xd, Xh = d["X_dasar"][pilih], d["X_hujan"][pilih][..., j]
         y, idx, bag, murni = d["y"][pilih], d["idx"][pilih], bagian[pilih], d["murni"][pilih]
         kanal_d = [str(k) for k in d["kanal_dasar"]]
         info = dict(pos=[str(p) for p in d["pos"]], rata=float(d["rata"][it]), std=float(d["std"][it]),
-                    atribut_c=d["atribut_c"].copy(), geser_daymet=1)
-    pagar_uji(idx, bag)
+                    atribut_c=d["atribut_c"].copy(), geser_daymet=1, i_target=it)
     X = np.concatenate([Xd[..., :pos_h], Xh, Xd[..., pos_h:]], axis=-1)
     assert X.shape[-1] == info_v["kanal_per_pos"]
     kanal = kanal_d[:pos_h] + info_v["kanal_hujan"] + kanal_d[pos_h:]
+    return X, y, idx, bag, murni, kanal, info
+
+
+def muat_latih_val_v2(h, kode, varian="V17", jendela=8, transformasi="log1p"):
+    """Tensor v2 (processed/v2/tensor_h{h}.npz) untuk satu varian hujan R0-R5, bagian latih dan validasi saja.
+    X = debit, flag, kanal hujan varian, Tmax, Tmin, 5 atribut. Bagian uji dibuang sebelum dikembalikan.
+    kode boleh diberi akhiran '@<ablasi>' (kunci ABLASI_V2) untuk hanya memakai sebagian kanal."""
+    kode, _, ablasi = kode.partition("@")
+    info_v = varian_v2()[kode]
+    X, y, idx, bag, murni, kanal, info = _sampel_v2(h, kode, varian, jendela, transformasi, lambda b: b <= 1)
+    pagar_uji(idx, bag)
     if ablasi == "atribut_acak":
         # kontrol [Li2022], sama dengan varian_ablasi preprocessing tahap 30: empat atribut tingkat A diganti
         # vektor normal baku tetap per pos (benih 0); bfi_latih (tingkat B) dan kanal dinamis tidak berubah
@@ -144,7 +155,7 @@ def muat_latih_val_v2(h, kode, varian="V17", jendela=8, transformasi="log1p"):
     l, v = bag == 0, bag == 1
     assert idx[l].max() < idx[v].min(), "urutan latih-validasi tidak kronologis"
     return dict(h=h, varian=varian, jendela=jendela, hujan=f"v2_{kode}" + (f"@{ablasi}" if ablasi else ""),
-                transformasi=transformasi, i_target=it,
+                transformasi=transformasi,
                 X_latih=X[l], y_latih=y[l], idx_latih=idx[l], X_val=X[v], y_val=y[v], idx_val=idx[v],
                 murni_val=murni[v], tanggal_val=PERIODE[idx[v]], kanal=kanal, **info)
 
@@ -391,6 +402,32 @@ def muat_uji(h, varian="V17"):
         it = int(d["i_target"])
         return dict(h=h, varian=varian, i_target=it, X_uji=d["X"][u], y_uji=d["y"][u], idx_uji=d["idx"][u],
                     bagian_uji=d["bagian"][u], rata=float(d["rata"][it]), std=float(d["std"][it]))
+
+
+def _cek_konfig_final():
+    assert KONFIG_FINAL.exists(), "konfigurasi_final.json belum ada: bagian uji belum boleh dibuka"
+    konf = json.loads(KONFIG_FINAL.read_text())
+    assert konf.get("terkunci") is True, "konfigurasi_final.json belum dikunci"
+    return konf
+
+
+def muat_uji_v2(h, kode="R3_titik", varian="V17", jendela=8, transformasi="log1p"):
+    """Bagian uji tensor v2 (kode bagian 2 = terukur, 3 = target berkode A:e) untuk satu varian hujan.
+    Hanya untuk notebook 03 dengan BAGIAN = "uji", setelah konfigurasi final dikunci."""
+    _cek_konfig_final()
+    X, y, idx, bag, murni, kanal, info = _sampel_v2(h, kode, varian, jendela, transformasi, lambda b: b >= 2)
+    assert np.isin(bag, [2, 3]).all() and idx.min() >= I_VAL and np.array_equal(murni, bag == 2)
+    return dict(h=h, varian=varian, jendela=jendela, hujan=f"v2_{kode}", transformasi=transformasi,
+                X_uji=X, y_uji=y, idx_uji=idx, bagian_uji=bag, murni_uji=murni, kanal=kanal, **info)
+
+
+def muat_deret_target_semua():
+    """Debit pos target (m³/s) seluruh periode, termasuk bagian uji (untuk ARIMA di notebook 03).
+    Hanya setelah konfigurasi final dikunci."""
+    _cek_konfig_final()
+    q = pd.read_csv(PROC / "debit_isi_m3s.csv", index_col=0, parse_dates=True, dtype={TARGET: float})[TARGET]
+    assert len(q) == N_HARI and q.index[0] == PERIODE[0] and q.index[-1] == PERIODE[-1]
+    return q
 
 
 def ke_m3s(z, data):
@@ -803,6 +840,27 @@ def jalankan_finalis(notebook, tahap, model, cfg, data, seed):
                         lintasan=N_LINTASAN, detik_mc=time.perf_counter() - t0, **tambahan)
     return r | dict(id_run=id_run, model=model, horizon=data["h"], seed=seed, dari_log=b is not None,
                     latih_ulang=b is not None)
+
+
+def pulihkan_bobot(model, cfg, data, seed, id_run):
+    """Bobot run tercatat yang dulu dilatih tanpa finalis=True (misalnya CNN tanh-Glorot tahap 24): latih ulang
+    dengan seed yang sama di perangkat yang sama, pastikan val_loss setiap epoch dan prediksi validasi identik
+    bit dengan run tercatat, lalu simpan bobotnya. Bukan pelatihan baru: gagal bila hasilnya tidak identik.
+    data harus berisi bagian latih dan validasi (muat_latih_val). Mengembalikan path bobot."""
+    f = BOBOT / f"{id_run}.weights.h5"
+    if f.exists():
+        return f
+    b = baca_log().set_index("id_run").loc[id_run]
+    assert b["mesin"] == mesin(), f"run {id_run} tercatat di {b['mesin']}, bukan {mesin()}"
+    assert (b["model"], int(b["horizon"]), int(b["seed"]), b["konfigurasi"]) == (model, data["h"], seed, konfig_json(model, cfg))
+    m, r = latih(model, cfg, data, seed)
+    with np.load(PREDIKSI / f"{id_run}.npz") as p:
+        assert np.array_equal(p["idx_val"], data["idx_val"]), f"indeks validasi {id_run} berbeda"
+        assert np.array_equal(p["val_loss"], np.asarray(r["riwayat"]["val_loss"])), f"latih ulang {id_run} tidak identik (val_loss)"
+        assert np.array_equal(p["prediksi"], r["prediksi"]), f"latih ulang {id_run} tidak identik (prediksi)"
+    BOBOT.mkdir(parents=True, exist_ok=True)
+    m.save_weights(f)
+    return f
 
 
 def ringkas_mc(id_run):

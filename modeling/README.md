@@ -6,7 +6,8 @@
 | `01_baseline.ipynb` | Pagar data uji, tujuh pembanding di bagian validasi, perkiraan waktu pencarian |
 | `02_pemilihan.ipynb` | Tahap A, tahap B, tahap R (hujan v2), dan ablasi; hanya bagian validasi |
 | `pekerja.py` | Proses pekerja untuk pelatihan paralel (`jalankan_paralel` di `pemodelan.py`) |
-| `03_evaluasi_uji.ipynb` | Evaluasi bagian uji, sekali jalan, membaca `konfigurasi_final.json` (belum dibuat) |
+| `03_evaluasi.ipynb` | Evaluasi akhir dari bobot tersimpan (tanpa latih ulang). `BAGIAN = "validasi"` di sel pertama (sekarang); `BAGIAN = "uji"` hanya sekali, dengan `BUKA_UJI=1`, bila `hasil/uji_dibuka.txt` belum ada dan `konfigurasi_final.json` sudah dikunci. Harus dijalankan di perangkat run tercatat (RTX 4060) |
+| `hasil/evaluasi_<bagian>_*.csv`, `figur/eval_<bagian>_*.png` | Keluaran notebook 03: per run, tabel A–C, pemeriksaan terhadap tahap D, konfigurasi dan hash-nya |
 | `hasil/log_run.csv` | Satu baris per run: perangkat, seed, konfigurasi, epoch terbaik, waktu latih, metrik validasi |
 | `hasil/prediksi_val/` | Prediksi validasi dan kurva loss per run |
 | `hasil/tahap_a_*.csv`, `hasil/pilihan_tahap_a.json` | Hasil tahap A per run, ringkasan per pilihan, dan pilihan yang dikunci |

@@ -18,10 +18,14 @@ Keluaran:
   raw/network/peta/nhdplus_flowline_kotak_peta.json
                                              NHDPlus V2 flowline orde >= 3 di kotak peta (latar peta)
   raw/spatial/dem/kotak_peta_150m.tif        DEM 3DEP 150 m untuk kotak peta (latar relief peta)
+  raw/network/peta/nhdplus_flowline_kotak_peta_v2.json
+  raw/spatial/dem/kotak_peta_v2_150m.tif     sama dengan dua file di atas, untuk kotak peta jaringan hujan v2
 
 Kotak peta (langkah 8) = batas poligon DAS pos muara digabung dengan koordinat
 semua stasiun hujan di raw/hujan/stasiun_terpakai.txt, ditambah margin 0,2 derajat.
-Kedua file langkah 8 hanya dipakai untuk menggambar peta di tahap 0d.
+Kedua file langkah 8 hanya dipakai untuk menggambar peta di tahap 0d. Langkah 9 sama, tetapi
+kotaknya memakai semua kandidat di raw/hujan/stasiun_v2.txt (skrip 00f); hasilnya hanya dipakai
+untuk peta 43 stasiun di tahap 31. File langkah 8 tidak disentuh.
 
 Daymet V4 R1 diambil dari server OPeNDAP NASA Earthdata (Hyrax), dengan subset
 indeks x-y di sekitar seluruh poligon DAS. Layanan NCSS THREDDS ORNL yang dipakai
@@ -110,6 +114,45 @@ def ada_kredensial_earthdata() -> bool:
     return False
 
 
+def latar_peta(raw: Path, a, file_stasiun: Path, akhiran: str, tanda: str) -> None:
+    """Alur NHDPlus V2 orde >= orde_min_peta dan DEM 3DEP untuk kotak peta: batas poligon DAS pos muara
+    digabung dengan koordinat stasiun di file_stasiun (format ghcnd-stations.txt), ditambah margin."""
+    das = baca_poligon(raw, [a.muara])
+    baris_st = [b for b in file_stasiun.read_text().splitlines() if b.strip()]
+    lintang = [float(b[12:20]) for b in baris_st]
+    bujur = [float(b[21:30]) for b in baris_st]
+    x0, y0, x1, y1 = das.total_bounds
+    kotak_peta = (min(x0, min(bujur)) - a.margin_peta, min(y0, min(lintang)) - a.margin_peta,
+                  max(x1, max(bujur)) + a.margin_peta, max(y1, max(lintang)) + a.margin_peta)
+    print(f"{tanda} Latar peta ({file_stasiun.name}, {len(baris_st)} stasiun), "
+          f"kotak (bujur/lintang) {tuple(round(float(v), 3) for v in kotak_peta)} ...")
+
+    f = raw / "network" / "peta" / f"nhdplus_flowline_kotak_peta{akhiran}.json"
+    if perlu(f, a.timpa):
+        import pynhd
+        fl = pynhd.WaterData("nhdflowline_network").bybox(kotak_peta)
+        n_semua = len(fl)
+        # baris disaring menurut orde; kolom yang disimpan memakai nama asli NHDPlus V2
+        kolom = ["comid", "gnis_name", "streamorde", "ftype", "fcode", "hydroseq", "terminalpa",
+                 "lengthkm", "geometry"]
+        fl = fl.loc[fl["streamorde"] >= a.orde_min_peta, kolom].sort_values("comid")
+        f.parent.mkdir(parents=True, exist_ok=True)
+        fl.to_crs(4326).to_file(f, driver="GeoJSON")
+        print(f"      flowline: {len(fl):,} ruas orde >= {a.orde_min_peta} dari {n_semua:,} ruas di kotak")
+    else:
+        print(f"      sudah ada: {f}")
+
+    f = raw / "spatial" / "dem" / f"kotak_peta{akhiran}_{a.resolusi_dem_peta}m.tif"
+    if perlu(f, a.timpa):
+        import py3dep
+        dem = py3dep.get_dem(kotak_peta, a.resolusi_dem_peta, crs=4326)
+        f.parent.mkdir(parents=True, exist_ok=True)
+        dem.rio.to_raster(f, compress="deflate")
+        print(f"      DEM: {dem.shape}, CRS {dem.rio.crs}")
+    else:
+        print(f"      sudah ada: {f}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--muara", default="02035000")
@@ -118,7 +161,7 @@ def main() -> int:
     ap.add_argument("--selesai", default="2024-12-31")
     ap.add_argument("--resolusi-dem", type=int, default=90, help="resolusi DEM, m")
     ap.add_argument("--output", default="raw")
-    ap.add_argument("--langkah", default="12345678",
+    ap.add_argument("--langkah", default="123456789",
                     help="langkah yang dijalankan, misalnya 123 untuk jaringan saja")
     ap.add_argument("--margin-peta", type=float, default=0.2, help="margin kotak peta, derajat")
     ap.add_argument("--resolusi-dem-peta", type=int, default=150, help="resolusi DEM latar peta, m")
@@ -132,7 +175,7 @@ def main() -> int:
 
     # 1. navigasi hilir per pos
     if "1" in a.langkah:
-        print(f"[1/8] NLDI DM flowlines {a.jarak} km per pos ...")
+        print(f"[1/9] NLDI DM flowlines {a.jarak} km per pos ...")
         for k in pos:
             f = raw / "network" / "dm" / f"{k}.json"
             if perlu(f, a.timpa):
@@ -142,7 +185,7 @@ def main() -> int:
 
     # 2. poligon DAS per pos
     if "2" in a.langkah:
-        print("[2/8] NLDI basin per pos (simplified=false) ...")
+        print("[2/9] NLDI basin per pos (simplified=false) ...")
         for k in pos:
             f = raw / "network" / "basin" / f"{k}.json"
             if perlu(f, a.timpa):
@@ -153,7 +196,7 @@ def main() -> int:
     # 3. seluruh alur hulu dari outlet, untuk peta
     if "3" in a.langkah:
         f = raw / "network" / "peta" / f"ut_{a.muara}.json"
-        print(f"[3/8] NLDI UT flowlines {a.jarak} km dari {a.muara} ...")
+        print(f"[3/9] NLDI UT flowlines {a.jarak} km dari {a.muara} ...")
         if perlu(f, a.timpa):
             simpan(f, ambil(f"{NLDI}/USGS-{a.muara}/navigation/UT/flowlines?distance={a.jarak}"))
         print(f"      {len(json.loads(f.read_text())['features'])} ruas")
@@ -161,7 +204,7 @@ def main() -> int:
     # 4. NHDPlus V2 VAA (orde sungai) untuk COMID alur UT
     if "4" in a.langkah:
         f = raw / "network" / "peta" / "nhdplus_vaa_james.csv"
-        print("[4/8] NHDPlus V2 VAA (pynhd.nhdplus_vaa) ...")
+        print("[4/9] NHDPlus V2 VAA (pynhd.nhdplus_vaa) ...")
         if perlu(f, a.timpa):
             import pynhd
             ut = json.loads((raw / "network" / "peta" / f"ut_{a.muara}.json").read_text())
@@ -178,7 +221,7 @@ def main() -> int:
     hilang_kabisat = None
     if "5" in a.langkah or "6" in a.langkah:
         f = raw / "iklim" / "cek_kabisat_daymet.csv"
-        print("[5/8] Cek 31 Desember tahun kabisat di Daymet ...")
+        print("[5/9] Cek 31 Desember tahun kabisat di Daymet ...")
         if perlu(f, a.timpa):
             info = json.loads(ambil(f"{NLDI}/USGS-{a.muara}"))
             bujur, lintang = info["features"][0]["geometry"]["coordinates"]
@@ -203,7 +246,7 @@ def main() -> int:
         kotak = tuple(poligon.total_bounds)
         th0, th1 = int(a.mulai[:4]), int(a.selesai[:4])
 
-        print("[6/8] Daymet V4 R1 (OPeNDAP NASA Earthdata) rata-rata poligon ...")
+        print("[6/9] Daymet V4 R1 (OPeNDAP NASA Earthdata) rata-rata poligon ...")
         target = [raw / "iklim" / f"daymet_{k}.csv" for k in pos]
         # hari sebelum periode, dipakai sebagai nilai hari pertama setelah input Daymet digeser +1 hari
         f_sebelum = raw / "iklim" / f"daymet_{th0 - 1}1231.csv"
@@ -321,7 +364,7 @@ def main() -> int:
     if "7" in a.langkah:
         import py3dep
         poligon = baca_poligon(raw, pos)
-        print(f"[7/8] DEM 3DEP {a.resolusi_dem} m per poligon (py3dep) ...")
+        print(f"[7/9] DEM 3DEP {a.resolusi_dem} m per poligon (py3dep) ...")
         for k, geom in zip(poligon["pos"], poligon.geometry):
             f = raw / "spatial" / "dem" / f"{k}.tif"
             if perlu(f, a.timpa):
@@ -332,40 +375,11 @@ def main() -> int:
 
     # 8. latar peta: alur NHDPlus V2 dan DEM untuk kotak peta (DAS + semua stasiun hujan + margin)
     if "8" in a.langkah:
-        import geopandas as gpd
-        das = baca_poligon(raw, [a.muara])
-        baris_st = [b for b in (raw / "hujan" / "stasiun_terpakai.txt").read_text().splitlines() if b.strip()]
-        lintang = [float(b[12:20]) for b in baris_st]
-        bujur = [float(b[21:30]) for b in baris_st]
-        x0, y0, x1, y1 = das.total_bounds
-        kotak_peta = (min(x0, min(bujur)) - a.margin_peta, min(y0, min(lintang)) - a.margin_peta,
-                      max(x1, max(bujur)) + a.margin_peta, max(y1, max(lintang)) + a.margin_peta)
-        print(f"[8/8] Latar peta, kotak (bujur/lintang) {tuple(round(float(v), 3) for v in kotak_peta)} ...")
+        latar_peta(raw, a, raw / "hujan" / "stasiun_terpakai.txt", "", "[8/9]")
 
-        f = raw / "network" / "peta" / "nhdplus_flowline_kotak_peta.json"
-        if perlu(f, a.timpa):
-            import pynhd
-            fl = pynhd.WaterData("nhdflowline_network").bybox(kotak_peta)
-            n_semua = len(fl)
-            # baris disaring menurut orde; kolom yang disimpan memakai nama asli NHDPlus V2
-            kolom = ["comid", "gnis_name", "streamorde", "ftype", "fcode", "hydroseq", "terminalpa",
-                     "lengthkm", "geometry"]
-            fl = fl.loc[fl["streamorde"] >= a.orde_min_peta, kolom].sort_values("comid")
-            f.parent.mkdir(parents=True, exist_ok=True)
-            fl.to_crs(4326).to_file(f, driver="GeoJSON")
-            print(f"      flowline: {len(fl):,} ruas orde >= {a.orde_min_peta} dari {n_semua:,} ruas di kotak")
-        else:
-            print(f"      sudah ada: {f}")
-
-        f = raw / "spatial" / "dem" / f"kotak_peta_{a.resolusi_dem_peta}m.tif"
-        if perlu(f, a.timpa):
-            import py3dep
-            dem = py3dep.get_dem(kotak_peta, a.resolusi_dem_peta, crs=4326)
-            f.parent.mkdir(parents=True, exist_ok=True)
-            dem.rio.to_raster(f, compress="deflate")
-            print(f"      DEM: {dem.shape}, CRS {dem.rio.crs}")
-        else:
-            print(f"      sudah ada: {f}")
+    # 9. latar peta jaringan hujan v2: kotak DAS + semua kandidat stasiun_v2.txt (skrip 00f) + margin
+    if "9" in a.langkah:
+        latar_peta(raw, a, raw / "hujan" / "stasiun_v2.txt", "_v2", "[9/9]")
 
     print("\nSelesai.")
     return 0
